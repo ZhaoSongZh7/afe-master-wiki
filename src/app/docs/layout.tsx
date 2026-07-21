@@ -4,7 +4,12 @@ import { baseOptions } from '@/lib/layout.shared';
 
 export default function Layout({ children }: LayoutProps<'/docs'>) {
   return (
-    <DocsLayout tree={source.getPageTree()} {...baseOptions()}>
+    <DocsLayout
+      tree={source.getPageTree()}
+      // Prelude-style: single grouped sidebar with icons, no top tabs.
+      tabs={false}
+      {...baseOptions()}
+    >
       {children}
     </DocsLayout>
   );

@@ -1,0 +1,10 @@
+{
+  "title": "Getting Started / Pre-boarding",
+  "icon": "Rocket",
+  "pages": [
+    "index",
+    "before-day-one",
+    "glossary-acronyms",
+    "whos-who"
+  ]
+}
