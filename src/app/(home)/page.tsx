@@ -9,6 +9,7 @@ import {
   TrendingUp,
   Map,
   Users,
+  Mountain,
 } from 'lucide-react';
 import { RelayLogo } from '@/components/logo';
 import { DayOneChecklist } from '@/components/day-one-checklist';
@@ -61,6 +62,12 @@ const categories = [
     description: 'Health & wellness, and events & community.',
     href: '/docs/health-wellness',
     Icon: Users,
+  },
+  {
+    title: 'Life in Seattle',
+    description: 'Hikes, a bucket list, and a weekend guide.',
+    href: '/docs/seattle-hikes',
+    Icon: Mountain,
   },
 ];
 

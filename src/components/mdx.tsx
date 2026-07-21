@@ -1,6 +1,8 @@
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
 import { DayOneChecklist } from '@/components/day-one-checklist';
+import { SeattleHikes } from '@/components/seattle-hikes';
+import { BucketList } from '@/components/bucket-list';
 import {
   Rocket,
   Wallet,
@@ -27,6 +29,12 @@ import {
   Armchair,
   MessagesSquare,
   ClipboardCheck,
+  Mountain,
+  MountainSnow,
+  Trees,
+  Compass,
+  MapPinned,
+  Coffee,
 } from 'lucide-react';
 
 // Icons referenced as JSX inside MDX (e.g. <Card icon={<Rocket />} />) must be
@@ -57,6 +65,12 @@ const icons = {
   Armchair,
   MessagesSquare,
   ClipboardCheck,
+  Mountain,
+  MountainSnow,
+  Trees,
+  Compass,
+  MapPinned,
+  Coffee,
 };
 
 export function getMDXComponents(components?: MDXComponents) {
@@ -64,6 +78,8 @@ export function getMDXComponents(components?: MDXComponents) {
     ...defaultMdxComponents,
     ...icons,
     DayOneChecklist,
+    SeattleHikes,
+    BucketList,
     ...components,
   } satisfies MDXComponents;
 }
