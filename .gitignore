@@ -24,3 +24,7 @@ yarn-error.log*
 .env*.local
 .vercel
 next-env.d.ts
+# CDK infra
+infra/node_modules/
+infra/cdk.out/
+cdk.out/

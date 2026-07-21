@@ -1,0 +1,22 @@
+{
+  "name": "afe-relay-infra",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "deploy": "cdk deploy",
+    "destroy": "cdk destroy",
+    "diff": "cdk diff",
+    "synth": "cdk synth"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.147.3",
+    "constructs": "10.3.0"
+  },
+  "devDependencies": {
+    "aws-cdk": "2.147.3",
+    "typescript": "5.4.5",
+    "ts-node": "10.9.2",
+    "@types/node": "20.14.2"
+  }
+}
