@@ -1,0 +1,107 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+/* ------------------------------------------------------------------ */
+/* Amazon Future Engineers — brand theme                              */
+/* orange #f55c38 · blue #0d2d7d · white                              */
+/* ------------------------------------------------------------------ */
+:root {
+  --afe-orange: #f55c38;
+  --afe-orange-dark: #d94726;
+  --afe-blue: #0d2d7d;
+  --afe-blue-light: #2a4bb0;
+  --afe-white: #ffffff;
+}
+
+/* Light theme ------------------------------------------------------ */
+:root {
+  --color-fd-background: #ffffff;
+  --color-fd-foreground: #10193a;
+
+  --color-fd-card: #ffffff;
+  --color-fd-card-foreground: #10193a;
+
+  --color-fd-popover: #ffffff;
+  --color-fd-popover-foreground: #10193a;
+
+  --color-fd-muted: #f5f6fa;
+  --color-fd-muted-foreground: #5b6478;
+
+  --color-fd-secondary: #f2f4f9;
+  --color-fd-secondary-foreground: var(--afe-blue);
+
+  /* orange = primary interactive accent (links, active nav, buttons) */
+  --color-fd-primary: var(--afe-orange);
+  --color-fd-primary-foreground: #ffffff;
+
+  /* subtle orange tint for hover / active sidebar backgrounds */
+  --color-fd-accent: color-mix(in srgb, var(--afe-orange) 12%, transparent);
+  --color-fd-accent-foreground: var(--afe-orange-dark);
+
+  --color-fd-border: color-mix(in srgb, var(--afe-blue) 12%, transparent);
+  --color-fd-ring: var(--afe-orange);
+}
+
+/* Dark theme ------------------------------------------------------- */
+.dark {
+  --color-fd-background: #0a1024;
+  --color-fd-foreground: #eef1f8;
+
+  --color-fd-card: #0f1730;
+  --color-fd-card-foreground: #eef1f8;
+
+  --color-fd-popover: #0f1730;
+  --color-fd-popover-foreground: #eef1f8;
+
+  --color-fd-muted: #141d3a;
+  --color-fd-muted-foreground: #9aa4bf;
+
+  --color-fd-secondary: #141d3a;
+  --color-fd-secondary-foreground: #c9d3f0;
+
+  --color-fd-primary: var(--afe-orange);
+  --color-fd-primary-foreground: #ffffff;
+
+  --color-fd-accent: color-mix(in srgb, var(--afe-orange) 18%, transparent);
+  --color-fd-accent-foreground: #ffb59f;
+
+  --color-fd-border: color-mix(in srgb, #ffffff 10%, transparent);
+  --color-fd-ring: var(--afe-orange);
+}
+
+/* Sidebar tweaks so the dark sidebar reads as deep-blue, not gray */
+.dark #nd-sidebar {
+  --color-fd-muted: #0f1730;
+  --color-fd-secondary: #141d3a;
+  --color-fd-muted-foreground: #9aa4bf;
+}
+
+/* Headings in brand blue (light) — keeps the orange for interaction  */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: var(--afe-blue);
+  letter-spacing: -0.01em;
+}
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4 {
+  color: #eef1f8;
+}
+
+/* Page title (large h1) a touch bolder */
+.prose h1 {
+  font-weight: 700;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+html > body[data-scroll-locked] {
+  margin-right: 0px !important;
+  --removed-body-scroll-bar-size: 0px !important;
+}

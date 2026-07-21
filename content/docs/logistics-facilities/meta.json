@@ -1,0 +1,9 @@
+{
+  "title": "Logistics & Facilities",
+  "icon": "Building2",
+  "pages": [
+    "index",
+    "transportation-commute",
+    "gref"
+  ]
+}
