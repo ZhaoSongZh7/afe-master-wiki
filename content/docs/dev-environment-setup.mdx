@@ -15,15 +15,71 @@ have their own pages.
 
 ## 1. Accounts & access
 
-_TODO_ — which accounts to set up first and how to request access.
+Set up these accounts in order (some depend on others):
+
+1. **Amazon A to Z** ([atoz.amazon.work](https://atoz.amazon.work/)) — your employee portal for payroll, benefits, and trainings
+2. **Midway authentication** — Amazon's internal auth system; most internal sites require it
+3. **Cloud Desktop (CDD)** — your remote development machine. Request through your manager or IT if not pre-provisioned.
+4. **Code Browser / code.amazon.com** — access to internal code repositories
+5. **Isengard** — AWS account access (your manager will add you to relevant accounts)
+
+<Callout type="warn" title="If accounts aren't ready">
+  If any access isn't provisioned by Day 1, tell your manager or onboarding buddy immediately. They can expedite through IT.
+</Callout>
 
 ## 2. IDE & editor
 
-_TODO_ — recommended editor, extensions, and settings.
+We recommend using whatever IDE your team uses, as they can give you direct support. The two officially supported options:
 
-## 3. Command line
+| IDE | Best for | Setup guide |
+| --- | --- | --- |
+| **VS Code** | Flexible, configurable, Brazil/Viceroy integration | [VSCode Setup Instructions](https://w.amazon.com/bin/view/Users/kafaro/Quip/VSCodejavaAMZN/) |
+| **IntelliJ IDEA** | Java/Kotlin, more stable Brazil integration | [IntelliJ Setup Instructions](https://w.amazon.com/bin/view/IntelliJ/) |
 
-_TODO_ — shell setup, package managers, and common CLIs.
+To connect your IDE to your Cloud Desktop via SSH, follow the setup guide for your chosen editor.
+
+## 3. Command line & build tools
+
+### Brazil Build System
+
+Amazon uses **Brazil** for code management and builds. Key commands you'll use daily:
+
+```bash
+# Set up a workspace
+brazil workspace create --name MyWorkspace
+brazil workspace use -p PackageName
+
+# Build a package (run from inside the package directory)
+cd src/PackageName
+brazil-build release
+
+# Create a code review
+cr --new
+```
+
+See the [SDE Intern Foundations](https://w.amazon.com/bin/view/EE/Learn/SDEOnboarding/InternOnboarding/) for a guided walkthrough of Brazil and CRUX.
+
+### Key internal tools
+
+| Tool | Purpose |
+| --- | --- |
+| [Sage](https://sage.amazon.dev/) | Amazon's internal StackOverflow — check here first for tech questions |
+| [Amazon Q Developer](https://aws.amazon.com/q/developer/getting-started/) | AI coding assistant for AWS and Amazon development |
+| [Code Browser](https://code.amazon.com) | Browse and search internal code repositories |
+| [Diff.corp](https://diff.corp.amazon.com/) | Compare two arbitrary texts |
+| [DrawIO](https://drawio.corp.amazon.com/?libs=aws2) | Diagram creation with AWS symbols |
+| [AWSUM](https://console.harmony.a2z.com/awsum) | Generate direct-sign-in links for AWS accounts |
+| [BuilderHub Create](https://create.hub.amazon.dev/clone) | Automatic service setup following best practices |
+
+## 4. Your onboarding training path
+
+Follow this week-by-week path from [SDE Intern Foundations](https://w.amazon.com/bin/view/ASBX/Learn/SDEOnboarding/InternOnboarding/):
+
+| Week | Goal | Key activities |
+| --- | --- | --- |
+| **Week 1** | Get set up, do your first code review | SDE Bootcamp, BT101 Workshop, team environment setup |
+| **Week 2** | Take on your first coding task | BT102 (Local Development with Brazil), small task from team backlog |
+| **Week 3** | Start sketching your project | Write design doc, explore tools/concepts needed for project |
 
 ## Tools with their own guides
 
@@ -35,6 +91,15 @@ _TODO_ — shell setup, package managers, and common CLIs.
     Setup and common workflows.
   </Card>
 </Cards>
+
+## Learning resources
+
+- [SDE Bootcamp](https://w.amazon.com/bin/view/EE/Learn/SDE_Bootcamp/CourseOutline) — Amazon architecture, dev tools, security best practices
+- [AWS Developer Center](https://aws.amazon.com/developer/) — hands-on with AWS services, SDKs, and tutorials
+- [AWS Documentation](https://docs.aws.amazon.com/) — user guides, code samples, API references
+- [ATA How-To's](https://w.amazon.com/bin/view/AmazonTechnicalAcademy/Internal/HowTos/) — internal guides for CRs, Brazil packages, dependencies
+- [Design Review Essentials](https://broadcast.amazon.com/videos/61208) — how to write and review design docs
+- [A Hitchhiker's Guide to Software Development at Amazon](https://broadcast.amazon.com/videos/81093) — understand the acronyms, tools, and concepts
 
 <Callout type="info">
   Need hardware for your setup? File a request via **[GREF](/docs/gref)**.

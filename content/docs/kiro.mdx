@@ -1,24 +1,55 @@
 ---
 title: Kiro
-description: Setup and common workflows for Kiro.
+description: Setup and common workflows for Kiro, the spec-driven development IDE.
 icon: Bot
 ---
 
-_TODO_ — one-line description of what Kiro is and what it's for.
+Kiro is an AI-powered IDE developed by Amazon that helps you build software through **spec-driven development** — turning requirements into working code via structured specifications.
 
 ## Getting access
 
-_TODO_ — how to request access and sign in.
+Kiro is available to all Amazon employees including interns:
+
+1. Download from [kiro.dev](https://kiro.dev/) (internal access via Midway)
+2. Sign in with your Amazon credentials
+3. No additional approval needed
 
 ## Setup
 
-_TODO_ — install and configuration steps.
+1. **Install Kiro** — download the desktop app for your OS (macOS or Linux)
+2. **Sign in** — use your Amazon/Midway credentials
+3. **Open a project** — point Kiro at your Brazil package or local project directory
+4. **Explore the spec panel** — this is where you'll define requirements that Kiro translates into implementation
 
 ## Common workflows
 
-_TODO_ — the everyday tasks you'll use Kiro for.
+### Spec-driven development
+
+Kiro's core workflow turns natural-language specs into code:
+
+1. **Write a spec** — describe what you want to build in plain language (feature, API, UI component)
+2. **Review the plan** — Kiro generates a structured implementation plan with file changes
+3. **Accept or refine** — iterate on the plan until it matches your intent
+4. **Generate code** — Kiro writes the implementation across multiple files
+5. **Review and test** — always verify the output, run tests, and submit a CR
+
+### When to use Kiro vs. Claude Code
+
+| Use Kiro when... | Use Claude Code when... |
+| --- | --- |
+| Starting a new feature from scratch | Debugging an existing issue |
+| You want structured, multi-file generation | You need quick terminal-based help |
+| Your task maps well to a specification | You're exploring code or asking questions |
+| You want to iterate on a design before coding | You need to run commands or check build output |
+
+### Tips
+
+- Start with small, well-defined tasks until you're comfortable with the spec workflow
+- Use Kiro's specs as a lightweight alternative to a design doc for smaller features
+- Combine with your tech mentor's feedback — share the spec for review before generating code
+- Kiro works well alongside VS Code or IntelliJ — use it for generation, your main IDE for debugging
 
 <Callout type="info">
   Part of your [Dev Environment Setup](/docs/dev-environment-setup). Also see
-  [Claude](/docs/claude).
+  [Claude](/docs/claude) for the complementary AI coding assistant.
 </Callout>

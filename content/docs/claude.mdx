@@ -4,21 +4,62 @@ description: Get access to Claude and use it effectively in your day-to-day work
 icon: Sparkles
 ---
 
-Claude is an AI assistant you'll use for coding, writing, and research.
+Claude is an AI assistant built by Anthropic that you'll use for coding, writing, debugging, and research during your internship.
 
 ## Getting access
 
-_TODO_ — how to request access, sign in, and which plan/workspace you're on.
+Amazon provides access to Claude through multiple channels:
+
+| Tool | Access | Best for |
+| --- | --- | --- |
+| **Amazon Q Developer** | Pre-installed in supported IDEs | Code completion, code review, inline suggestions |
+| **Claude via Amazon internal chat** | [chat.com.amazon.dev](https://chat.com.amazon.dev/) | General questions, writing, brainstorming |
+| **Claude Code (CLI)** | Available on Cloud Desktops | Multi-file coding tasks, project-wide changes, terminal workflows |
+| **PartyRock for Amazon** | [internal.partyrock.aws.dev](https://internal.partyrock.aws.dev/) | Building AI-powered apps and prototypes |
+
+No special approval is needed — these tools are available to all Amazon employees including interns. Access uses your Midway authentication.
 
 ## Setup
 
-_TODO_ — install steps (IDE extension, CLI, or web), and any configuration.
+### Amazon Q Developer (IDE extension)
+
+1. Open VS Code or IntelliJ
+2. Install the **Amazon Q** extension from the marketplace
+3. Sign in with your Amazon credentials
+4. Start getting inline code suggestions as you type
+
+### Claude Code (CLI)
+
+If your team uses Claude Code for terminal-based AI assistance:
+
+1. It's pre-installed on most Cloud Desktops
+2. Run `claude` in your terminal to start a session
+3. Use it for multi-file edits, debugging, and code exploration
 
 ## Using it well
 
-_TODO_ — tips, do's and don'ts, and good first prompts for your work.
+### Do's
+
+- **Use it to learn Amazon tools** — ask about Brazil commands, CRUX workflows, or how to read a stack trace
+- **Explain your context** — "I'm an AFE intern working on [project]. I need help with [specific thing]"
+- **Iterate** — if the first response isn't right, provide feedback and refine
+- **Verify outputs** — always review generated code before committing. Run tests.
+- **Use it for code reviews** — ask it to review your CR before submitting to your tech mentor
+
+### Don'ts
+
+- **Don't paste confidential data** into external (non-Amazon) AI tools. The internal tools above are approved for Amazon-confidential data.
+- **Don't blindly copy-paste** — understand what the code does before using it
+- **Don't skip learning** — AI helps you move faster, but you still need to understand the fundamentals
+
+### Good first prompts
+
+- "Explain what this Brazil build error means and how to fix it: [paste error]"
+- "I need to write a unit test for this method: [paste code]. Use JUnit and Mockito."
+- "Review this code for potential issues: [paste code]"
+- "How do I create a code review in CRUX after making changes?"
+- "Explain this stack trace and suggest where the bug might be: [paste trace]"
 
 <Callout type="info">
-  Part of your [Dev Environment Setup](/docs/dev-environment-setup). Also see
-  [Kiro](/docs/kiro).
+  Review Amazon's [AI for Me: Quick Start Guide](https://w.amazon.com/bin/view/AIforMe/#HDiya:AmazonInternalChatbot) for data handling guidelines and responsible usage policies. Also see [Kiro](/docs/kiro) for spec-driven development.
 </Callout>
