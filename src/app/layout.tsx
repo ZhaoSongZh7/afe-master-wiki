@@ -25,7 +25,14 @@ export default function Layout({ children }: LayoutProps<'/'>) {
       suppressHydrationWarning
     >
       <body className="flex flex-col min-h-screen">
-        <RootProvider>{children}</RootProvider>
+        <RootProvider
+          theme={{
+            defaultTheme: 'dark',
+            enableSystem: false,
+          }}
+        >
+          {children}
+        </RootProvider>
         <FloatingChat />
       </body>
     </html>
