@@ -8,7 +8,8 @@
     "start": "next start",
     "types:check": "fumadocs-mdx && next typegen && tsc --noEmit",
     "postinstall": "fumadocs-mdx",
-    "lint": "eslint"
+    "lint": "eslint",
+    "slack:scrape": "tsx scripts/slack-to-wiki.ts"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "3.1091.0",
@@ -35,6 +36,7 @@
     "eslint-config-next": "16.2.10",
     "postcss": "^8.5.17",
     "tailwindcss": "^4.3.2",
+    "tsx": "^4.23.1",
     "typescript": "^6.0.3"
   }
 }
