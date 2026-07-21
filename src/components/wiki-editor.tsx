@@ -16,6 +16,7 @@ import {
   Eye,
   Pencil,
 } from 'lucide-react';
+import { IconAction } from '@/components/ui/icon-action';
 
 type EditorProps = {
   initialContent?: string;
@@ -130,20 +131,18 @@ export function WikiEditor({ initialContent = '', onChange, placeholder }: Edito
   );
 
   return (
-    <div className="border border-fd-border rounded-lg overflow-hidden bg-fd-background">
+    <div className="overflow-hidden rounded-[var(--relay-radius-control)] border border-relay-border bg-relay-surface">
       {/* Toolbar */}
-      <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-fd-border bg-fd-muted/50 flex-wrap">
+      <div className="flex flex-wrap items-center gap-0.5 border-b border-relay-border bg-fd-muted/60 px-2 py-1.5">
         {toolbarActions.map((item) => (
-          <button
+          <IconAction
             key={item.label}
-            type="button"
+            label={item.label}
+            size="sm"
             onClick={() => applyAction(item.action)}
-            className="p-1.5 rounded hover:bg-fd-accent hover:text-fd-accent-foreground text-fd-muted-foreground transition-colors"
-            title={item.label}
-            aria-label={item.label}
           >
             {item.icon}
-          </button>
+          </IconAction>
         ))}
 
         <div className="flex-1" />

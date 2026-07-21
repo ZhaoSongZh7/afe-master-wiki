@@ -1,8 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Pencil, X, Loader2, ExternalLink, Check } from 'lucide-react';
+import { Pencil, ExternalLink, Check } from 'lucide-react';
 import { WikiEditor } from './wiki-editor';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Field } from '@/components/ui/field';
+import { IconAction } from '@/components/ui/icon-action';
+import { StatusBanner } from '@/components/ui/status-banner';
 
 type EditPageButtonProps = {
   slug: string;
@@ -71,128 +75,106 @@ export function EditPageButton({ slug, title, description }: EditPageButtonProps
     }
   };
 
+  const inputClass =
+    'w-full rounded-[var(--relay-radius-control)] border border-relay-border bg-relay-surface px-3 py-2 text-sm text-relay-ink placeholder:text-relay-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-ring';
+
   if (!isEditing) {
     return (
-      <button
-        type="button"
-        onClick={handleOpenEditor}
-        disabled={loading}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-fd-border text-fd-muted-foreground hover:text-fd-foreground hover:bg-fd-accent transition-colors disabled:opacity-50"
-      >
+      <Button type="button" variant="outline" size="sm" onClick={handleOpenEditor} loading={loading}>
         {loading ? (
-          <>
-            <Loader2 size={14} className="animate-spin" />
-            Loading...
-          </>
+          'Loading…'
         ) : (
           <>
-            <Pencil size={14} />
+            <Pencil size={14} aria-hidden />
             Edit this page
           </>
         )}
-      </button>
+      </Button>
     );
   }
 
   return (
-    <div className="mt-6 border border-fd-border rounded-lg p-4 bg-fd-card">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-fd-foreground">Edit Page</h3>
-        <button
-          type="button"
+    <div className="mt-6 rounded-[var(--relay-radius-card)] border border-relay-border bg-relay-surface p-4">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="font-display text-lg font-semibold text-relay-ink">Edit page</h3>
+        <IconAction
+          label="Close editor"
           onClick={() => {
             setIsEditing(false);
             setStatus('idle');
             setPrUrl(null);
           }}
-          className="p-1.5 rounded hover:bg-fd-accent text-fd-muted-foreground hover:text-fd-foreground transition-colors"
-          aria-label="Close editor"
         >
-          <X size={18} />
-        </button>
+          <span aria-hidden className="text-lg leading-none">✕</span>
+        </IconAction>
       </div>
 
       {status === 'success' && prUrl ? (
         <div className="flex flex-col items-center gap-3 py-8">
-          <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-            <Check size={20} />
-            <span className="font-medium">Pull request created!</span>
+          <div className="flex items-center gap-2 text-relay-positive">
+            <Check size={20} aria-hidden />
+            <span className="font-display font-medium">Pull request created!</span>
           </div>
-          <p className="text-sm text-fd-muted-foreground text-center">
+          <p className="text-center text-sm text-relay-ink-muted">
             Your edit has been submitted for review. A maintainer will review and merge it.
           </p>
           <a
             href={prUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md bg-fd-primary text-fd-primary-foreground hover:opacity-90 transition-opacity"
+            className={buttonVariants({ variant: 'signal', size: 'md' })}
           >
             View Pull Request
-            <ExternalLink size={14} />
+            <ExternalLink size={14} aria-hidden />
           </a>
         </div>
       ) : (
         <>
-          {/* Title field */}
-          <div className="mb-3">
-            <label htmlFor="edit-title" className="block text-sm font-medium text-fd-foreground mb-1">
-              Title
-            </label>
-            <input
-              id="edit-title"
-              type="text"
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-fd-border rounded-md bg-fd-background text-fd-foreground focus:outline-none focus:ring-2 focus:ring-fd-primary"
-            />
+          <div className="space-y-3">
+            <Field id="edit-title" label="Title">
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className={inputClass}
+              />
+            </Field>
+
+            <Field id="edit-description" label="Description">
+              <input
+                type="text"
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                placeholder="Brief description of this page"
+                className={inputClass}
+              />
+            </Field>
+
+            <div>
+              <p className="mb-1 text-sm font-medium font-display text-relay-ink">Content</p>
+              <WikiEditor initialContent={editContent} onChange={setEditContent} />
+            </div>
           </div>
 
-          {/* Description field */}
-          <div className="mb-3">
-            <label htmlFor="edit-description" className="block text-sm font-medium text-fd-foreground mb-1">
-              Description
-            </label>
-            <input
-              id="edit-description"
-              type="text"
-              value={editDescription}
-              onChange={(e) => setEditDescription(e.target.value)}
-              placeholder="Brief description of this page"
-              className="w-full px-3 py-2 text-sm border border-fd-border rounded-md bg-fd-background text-fd-foreground placeholder:text-fd-muted-foreground focus:outline-none focus:ring-2 focus:ring-fd-primary"
-            />
-          </div>
-
-          {/* Content editor */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-fd-foreground mb-1">
-              Content
-            </label>
-            <WikiEditor initialContent={editContent} onChange={setEditContent} />
-          </div>
-
-          {/* Error message */}
           {status === 'error' && (
-            <p className="text-sm text-red-600 dark:text-red-400 mb-3">{errorMessage}</p>
+            <div className="mt-3">
+              <StatusBanner tone="error" title="Couldn’t submit the edit">
+                {errorMessage}
+              </StatusBanner>
+            </div>
           )}
 
-          {/* Submit button */}
-          <div className="flex items-center gap-3">
-            <button
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Button
               type="button"
+              variant="signal"
               onClick={handleSubmit}
-              disabled={status === 'submitting' || !editTitle.trim() || !editContent.trim()}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md bg-fd-primary text-fd-primary-foreground hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+              loading={status === 'submitting'}
+              disabled={!editTitle.trim() || !editContent.trim()}
             >
-              {status === 'submitting' ? (
-                <>
-                  <Loader2 size={14} className="animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                'Submit Edit as PR'
-              )}
-            </button>
-            <span className="text-xs text-fd-muted-foreground">
+              {status === 'submitting' ? 'Submitting…' : 'Submit Edit as PR'}
+            </Button>
+            <span className="text-xs text-relay-ink-muted">
               Your edit will be reviewed before publishing
             </span>
           </div>

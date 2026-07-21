@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight, Compass, X } from 'lucide-react';
 
 /** Fire this event from anywhere to (re)start the tour. */
@@ -38,7 +38,7 @@ export function TourButton({ className }: { className?: string }) {
  */
 
 const SEEN_KEY = 'relay:tour-seen';
-const ORANGE = '#f55c38';
+const ORANGE = 'var(--relay-signal)';
 
 type Step = {
   selector?: string; // CSS selector of the target; omit for a centered card
@@ -96,7 +96,7 @@ export function ProductTour() {
   const [active, setActive] = useState(false);
   const [i, setI] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
-  const stepsRef = useRef<Step[]>(STEPS);
+  const [steps, setSteps] = useState<Step[]>(STEPS);
 
   // Resolve which steps have a present target (welcome/end steps have none).
   const resolveVisibleSteps = useCallback(() => {
@@ -104,7 +104,7 @@ export function ProductTour() {
   }, []);
 
   const start = useCallback(() => {
-    stepsRef.current = resolveVisibleSteps();
+    setSteps(resolveVisibleSteps());
     setI(0);
     setActive(true);
   }, [resolveVisibleSteps]);
@@ -140,26 +140,25 @@ export function ProductTour() {
     }
   }, []);
 
-  const step = stepsRef.current[i];
+  const step = steps[i];
 
   // measure the current target and scroll it into view
   useLayoutEffect(() => {
     if (!active || !step) return;
-    if (!step.selector) {
-      setRect(null);
-      return;
-    }
-    const el = findVisible(step.selector);
-    if (!el) {
-      setRect(null);
-      return;
-    }
-    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    // Route every setRect through `measure` (no direct synchronous setState in
+    // the effect body). Centered/absent-target steps resolve to a null rect.
+    const el = step.selector ? findVisible(step.selector) : null;
     const measure = () => {
+      if (!el) {
+        setRect(null);
+        return;
+      }
       const r = el.getBoundingClientRect();
       setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
     };
     measure();
+    if (!el) return;
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     const t = setTimeout(measure, 320); // re-measure after smooth scroll settles
     window.addEventListener('resize', measure);
     window.addEventListener('scroll', measure, true);
@@ -172,13 +171,13 @@ export function ProductTour() {
 
   const next = useCallback(() => {
     setI((v) => {
-      if (v >= stepsRef.current.length - 1) {
+      if (v >= steps.length - 1) {
         finish();
         return v;
       }
       return v + 1;
     });
-  }, [finish]);
+  }, [finish, steps.length]);
   const prev = useCallback(() => setI((v) => Math.max(0, v - 1)), []);
 
   useEffect(() => {
@@ -205,7 +204,7 @@ export function ProductTour() {
 
   if (!active || !step) return null;
 
-  const total = stepsRef.current.length;
+  const total = steps.length;
   const pad = 8;
   const spotlight: Rect | null = rect
     ? {
@@ -263,7 +262,7 @@ export function ProductTour() {
         {/* progress dots */}
         <div className="mt-4 flex items-center justify-between">
           <div className="flex gap-1.5">
-            {stepsRef.current.map((_, idx) => (
+            {steps.map((_, idx) => (
               <span
                 key={idx}
                 className="size-1.5 rounded-full transition-colors"

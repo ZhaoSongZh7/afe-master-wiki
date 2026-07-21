@@ -31,8 +31,9 @@ const ITEMS: Item[] = [
   { id: 'glossary', label: 'Skim the glossary & acronyms', href: '/docs/glossary-acronyms' },
 ];
 
-const ORANGE = '#f55c38';
-const BLUE = '#0d2d7d';
+// Semantic tokens for inline styles (resolve to the Field Guide palette).
+const ORANGE = 'var(--relay-signal)';
+const BLUE = 'var(--relay-brand-ink)';
 
 function readStateSnapshot(): string {
   if (typeof window === 'undefined') return '{}';
@@ -70,7 +71,9 @@ function fireConfetti() {
     return;
   }
 
-  const colors = [ORANGE, BLUE, '#f5a623', '#ffffff', '#2a4bb0'];
+  // Canvas 2D fillStyle can't consume CSS variables, so the celebration burst
+  // uses literal brand colors (the one documented raw-color exception).
+  const colors = ['#e94f2d', '#102a68', '#f5a623', '#ffffff', '#2a4bb0'];
   const N = 140;
   const parts = Array.from({ length: N }, (_, i) => ({
     x: canvas.width / 2,

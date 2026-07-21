@@ -4,8 +4,11 @@
  * Deliberately vanilla (canvas + requestAnimationFrame) so it adds NO npm
  * dependency — avoids lockfile / supply-chain issues on Vercel.
  */
-const ORANGE = '#f55c38';
-const BLUE = '#0d2d7d';
+// Canvas 2D fillStyle cannot consume CSS variables, so the celebration burst
+// uses literal Field Guide brand colors — the one documented raw-color
+// exception (all other surfaces consume semantic tokens).
+const ORANGE = '#e94f2d';
+const BLUE = '#102a68';
 
 export function fireConfetti() {
   if (typeof document === 'undefined') return;

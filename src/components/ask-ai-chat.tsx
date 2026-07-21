@@ -126,8 +126,8 @@ export function AskAiChat() {
 
   return (
     <main className="relative flex h-dvh flex-col overflow-hidden bg-fd-background">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(ellipse_at_top,_rgba(245,92,56,0.16),_transparent_65%)] dark:bg-[radial-gradient(ellipse_at_top,_rgba(245,92,56,0.14),_transparent_65%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(13,45,125,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(13,45,125,0.035)_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:linear-gradient(to_bottom,black_5%,transparent_78%)] dark:opacity-25" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(ellipse_at_top,_var(--relay-signal-soft),_transparent_65%)]" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--relay-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--relay-border)_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-40 [mask-image:linear-gradient(to_bottom,black_5%,transparent_78%)]" />
       <div className="relative mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden px-4 sm:px-6">
         <header className="flex shrink-0 items-center justify-between border-b border-fd-border/60 py-4">
           <Link
@@ -218,10 +218,9 @@ export function AskAiChat() {
                         message.content
                       )}
                       {!message.content && (
-                        <span className="inline-flex gap-1" aria-label="Generating response">
-                          <span className="size-1.5 animate-bounce rounded-full bg-fd-primary" />
-                          <span className="size-1.5 animate-bounce rounded-full bg-fd-primary [animation-delay:120ms]" />
-                          <span className="size-1.5 animate-bounce rounded-full bg-fd-primary [animation-delay:240ms]" />
+                        <span className="flex items-center gap-2 text-relay-ink-muted" aria-label="Generating response">
+                          <span className="relay-pulse h-0.5 w-10 rounded-full bg-relay-signal" aria-hidden />
+                          <span className="text-xs">Searching the handbook…</span>
                         </span>
                       )}
                       {streamingMessageId === message.id && message.content && (

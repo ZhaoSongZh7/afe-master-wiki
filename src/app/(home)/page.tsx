@@ -2,6 +2,9 @@ import Link from 'next/link';
 import {
   ArrowRight,
   ArrowUpRight,
+  FilePlus,
+  CircleQuestionMark,
+  Library,
   Rocket,
   Wallet,
   Car,
@@ -18,122 +21,147 @@ import { ProductTour, TourButton } from '@/components/product-tour';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { PageFrame } from '@/components/ui/page-frame';
+import { SectionHeading } from '@/components/ui/section-heading';
 import { cn } from '@/lib/cn';
 
-const categories = [
-  {
-    title: 'Getting Started',
-    description: "Before Day One, glossary & acronyms, who's who.",
-    href: '/docs/before-day-one',
-    Icon: Rocket,
-  },
-  {
-    title: 'Pay & Benefits',
-    description: 'Insurance, expenses & reimbursement, and time off.',
-    href: '/docs/benefits-insurance',
-    Icon: Wallet,
-  },
-  {
-    title: 'Logistics & Commute',
-    description: 'Transportation, badge access, and relocation.',
-    href: '/docs/transportation-commute',
-    Icon: Car,
-  },
-  {
-    title: 'Facilities & Equipment',
-    description: 'Equipment requests and your physical workspace.',
-    href: '/docs/gref',
-    Icon: Building2,
-  },
-  {
-    title: 'Tools & Software',
-    description: 'Dev environment setup, Claude, and Kiro.',
-    href: '/docs/dev-environment-setup',
-    Icon: SquareTerminal,
-  },
-  {
-    title: 'Career & Growth',
-    description: 'Mentorship, goals & 1:1s, and evaluations.',
-    href: '/docs/career-development',
-    Icon: TrendingUp,
-  },
-  {
-    title: 'The Program',
-    description: 'Timeline, milestones, and culture & values.',
-    href: '/docs/program-overview',
-    Icon: Map,
-  },
-  {
-    title: 'Community & Wellbeing',
-    description: 'Health & wellness, and events & community.',
-    href: '/docs/health-wellness',
-    Icon: Users,
-  },
-  {
-    title: 'Life in Seattle',
-    description: 'Hikes, a bucket list, and a weekend guide.',
-    href: '/docs/seattle-hikes',
-    Icon: Mountain,
-  },
+type Accent = 'info' | 'positive' | 'highlight';
+type Span = 'standard' | 'wide' | 'tall';
+
+// Visual metadata only — titles, descriptions, and destinations are unchanged.
+const categories: {
+  title: string;
+  description: string;
+  href: string;
+  Icon: React.ComponentType<{ className?: string }>;
+  accent: Accent;
+  span: Span;
+}[] = [
+  { title: 'Getting Started', description: "Before Day One, glossary & acronyms, who's who.", href: '/docs/before-day-one', Icon: Rocket, accent: 'info', span: 'wide' },
+  { title: 'Pay & Benefits', description: 'Insurance, expenses & reimbursement, and time off.', href: '/docs/benefits-insurance', Icon: Wallet, accent: 'positive', span: 'standard' },
+  { title: 'Logistics & Commute', description: 'Transportation, badge access, and relocation.', href: '/docs/transportation-commute', Icon: Car, accent: 'highlight', span: 'standard' },
+  { title: 'Facilities & Equipment', description: 'Equipment requests and your physical workspace.', href: '/docs/gref', Icon: Building2, accent: 'info', span: 'standard' },
+  { title: 'Tools & Software', description: 'Dev environment setup, Claude, and Kiro.', href: '/docs/dev-environment-setup', Icon: SquareTerminal, accent: 'positive', span: 'standard' },
+  { title: 'Career & Growth', description: 'Mentorship, goals & 1:1s, and evaluations.', href: '/docs/career-development', Icon: TrendingUp, accent: 'highlight', span: 'standard' },
+  { title: 'The Program', description: 'Timeline, milestones, and culture & values.', href: '/docs/program-overview', Icon: Map, accent: 'info', span: 'standard' },
+  { title: 'Community & Wellbeing', description: 'Health & wellness, and events & community.', href: '/docs/health-wellness', Icon: Users, accent: 'positive', span: 'standard' },
+  { title: 'Life in Seattle', description: 'Hikes, a bucket list, and a weekend guide.', href: '/docs/seattle-hikes', Icon: Mountain, accent: 'highlight', span: 'wide' },
+];
+
+const accentIcon: Record<Accent, string> = {
+  info: 'bg-[var(--relay-info-soft)] text-relay-info',
+  positive: 'bg-[var(--relay-positive-soft)] text-relay-positive',
+  highlight: 'bg-[var(--relay-highlight-soft)] text-relay-highlight',
+};
+
+const orientationNodes = [
+  { label: 'Get oriented', hint: 'Onboarding & first days' },
+  { label: 'Get equipped', hint: 'Tools, benefits, logistics' },
+  { label: 'Get connected', hint: 'Culture, growth, community' },
 ];
 
 export default function HomePage() {
   return (
-    <main className="relative flex flex-1 flex-col items-center overflow-hidden px-4 py-10 sm:px-6 sm:py-16">
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_top,_rgba(245,92,56,0.13),_transparent_62%)] dark:bg-[radial-gradient(ellipse_at_top,_rgba(245,92,56,0.16),_transparent_62%)]" />
-      <div className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(to_right,rgba(13,45,125,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(13,45,125,0.04)_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:linear-gradient(to_bottom,black_10%,transparent_72%)] dark:opacity-30" />
-
-      <section className="w-full max-w-5xl text-center">
-        <Badge>
-          <span className="size-1.5 rounded-full bg-fd-primary" />
-          Amazon Future Engineers
-        </Badge>
-        <h1 className="mt-7 flex justify-center">
-          <RelayLogo className="h-20 sm:h-24" />
-          <span className="sr-only">Relay</span>
-        </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-fd-muted-foreground sm:text-lg">
-          A friendly starting point for your Amazon Future Engineers journey —
-          find what you need for onboarding, benefits, development, and community.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/docs" className={buttonVariants({ size: 'lg' })}>
-            Explore the handbook <ArrowRight className="size-4" />
-          </Link>
-          <Link href="/docs/faq" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
-            Read the FAQ
-          </Link>
-          <TourButton className={buttonVariants({ variant: 'ghost', size: 'lg' })} />
+    <PageFrame motif="route-map" className="flex flex-1 flex-col items-center px-4 py-10 sm:px-6 sm:py-14">
+      {/* ---- Asymmetric hero -------------------------------------------- */}
+      <section className="grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="relay-enter">
+          <Badge variant="signal">
+            <span className="size-1.5 rounded-full bg-relay-signal" />
+            Amazon Future Engineers
+          </Badge>
+          <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-relay-ink sm:text-5xl lg:text-6xl">
+            Start here.<br />
+            <span className="text-relay-signal">Find your next step.</span>
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-7 text-relay-ink-muted sm:text-lg">
+            Your field guide to the Amazon Future Engineers program — onboarding,
+            benefits, development, and community, all in one place.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link href="/docs" className={buttonVariants({ variant: 'signal', size: 'lg' })}>
+              Explore the handbook <ArrowRight className="size-4" />
+            </Link>
+            <Link href="/ask-ai" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+              Ask Relay
+            </Link>
+            <TourButton className={buttonVariants({ variant: 'ghost', size: 'lg' })} />
+          </div>
         </div>
 
-        <div className="mx-auto mt-12 max-w-md" data-tour="checklist">
-          <DayOneChecklist variant="widget" />
+        {/* Route-map composition — decorative, hidden from AT */}
+        <div className="relative" aria-hidden>
+          <Card variant="feature" className="p-6 sm:p-8">
+            <div className="flex justify-center">
+              <RelayLogo className="h-14 sm:h-16" />
+            </div>
+            <ol className="mt-8 space-y-0">
+              {orientationNodes.map((node, i) => (
+                <li key={node.label} className="relative flex gap-4 pb-6 last:pb-0">
+                  {i < orientationNodes.length - 1 && (
+                    <span className="absolute left-[13px] top-7 h-full w-px bg-relay-border-strong" />
+                  )}
+                  <span className="relative z-10 mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-relay-signal bg-relay-surface-raised">
+                    <span className="size-2 rounded-full bg-relay-signal" />
+                  </span>
+                  <div>
+                    <p className="font-display font-semibold text-relay-ink">{node.label}</p>
+                    <p className="text-sm text-relay-ink-muted">{node.hint}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </Card>
         </div>
       </section>
 
-      <section className="mt-20 w-full max-w-5xl" aria-labelledby="handbook-sections">
-        <div className="mb-6 flex items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-fd-primary">Find your way around</p>
-            <h2 id="handbook-sections" className="mt-2 text-2xl font-semibold tracking-tight text-fd-foreground sm:text-3xl">
-              Everything you need, in one place
-            </h2>
-          </div>
-          <Link href="/docs" className="hidden items-center gap-1 text-sm font-medium text-fd-primary hover:underline sm:inline-flex">
-            View all <ArrowUpRight className="size-4" />
-          </Link>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-tour="categories">
-          {categories.map(({ title, description, href, Icon }) => (
-            <Link key={href} href={href} className="group focus-visible:outline-none">
-              <Card className="h-full transition-all duration-200 group-hover:-translate-y-1 group-hover:border-fd-primary/50 group-hover:shadow-lg group-hover:shadow-fd-primary/10 group-focus-visible:ring-2 group-focus-visible:ring-fd-ring">
+      {/* ---- Day One checklist: feature surface ------------------------- */}
+      <section className="mt-16 w-full max-w-6xl" aria-labelledby="first-handoff">
+        <SectionHeading
+          eyebrow="Your first handoff"
+          title="Day-one checklist"
+          description="Track what to do in your first week — progress saves on this device."
+          index="01"
+          className="mb-6"
+        />
+        <Card variant="feature" data-tour="checklist">
+          <CardContent className="p-2 sm:p-4">
+            <DayOneChecklist variant="widget" />
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* ---- Bento categories ------------------------------------------- */}
+      <section className="mt-16 w-full max-w-6xl" aria-labelledby="handbook-sections">
+        <SectionHeading
+          eyebrow="Find your way around"
+          title="Everything you need, in one place"
+          index="02"
+          action={
+            <Link href="/docs" className="inline-flex items-center gap-1 text-sm font-medium text-relay-signal hover:underline">
+              View all <ArrowUpRight className="size-4" />
+            </Link>
+          }
+          className="mb-6"
+        />
+        <div className="grid auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-tour="categories">
+          {categories.map(({ title, description, href, Icon, accent, span }) => (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                'group focus-visible:outline-none',
+                span === 'wide' && 'sm:col-span-2 lg:col-span-1',
+              )}
+            >
+              <Card variant="interactive" className="h-full group-focus-visible:ring-2 group-focus-visible:ring-fd-ring">
                 <CardContent className="flex h-full flex-col p-5">
-                  <span className="flex size-10 items-center justify-center rounded-xl bg-fd-accent text-fd-primary transition-colors group-hover:bg-fd-primary group-hover:text-white">
+                  <span className={cn('flex size-10 items-center justify-center rounded-xl transition-colors', accentIcon[accent])}>
                     <Icon className="size-5" />
                   </span>
-                  <h3 className="mt-4 font-semibold text-fd-foreground">{title}</h3>
-                  <p className="mt-1 flex-1 text-sm leading-6 text-fd-muted-foreground">{description}</p>
-                  <span className={cn('mt-4 inline-flex items-center gap-1 text-sm font-medium text-fd-primary', 'transition-transform group-hover:translate-x-0.5')}>
+                  <h3 className="mt-4 font-display font-semibold text-relay-ink">{title}</h3>
+                  <p className="mt-1 flex-1 text-sm leading-6 text-relay-ink-muted">{description}</p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-relay-signal transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none">
                     Explore <ArrowRight className="size-3.5" />
                   </span>
                 </CardContent>
@@ -143,7 +171,32 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ---- Contribution strip ----------------------------------------- */}
+      <section className="mt-16 w-full max-w-6xl">
+        <Card variant="inset">
+          <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="font-display text-lg font-semibold text-relay-ink">Help keep Relay useful</h2>
+              <p className="mt-1 text-sm text-relay-ink-muted">
+                Find an answer, check the authoritative source, or add a page for the next cohort.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/docs/faq" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+                <CircleQuestionMark className="size-4" /> FAQ
+              </Link>
+              <Link href="/docs/canonical-sources" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+                <Library className="size-4" /> Canonical Sources
+              </Link>
+              <Link href="/docs/new" className={buttonVariants({ variant: 'signal', size: 'sm' })}>
+                <FilePlus className="size-4" /> New Page
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
       <ProductTour />
-    </main>
+    </PageFrame>
   );
 }

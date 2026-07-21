@@ -115,9 +115,9 @@ export function FloatingChat() {
       {open && (
         <div className="fixed bottom-24 right-5 z-[60] flex h-[32rem] max-h-[calc(100dvh-7rem)] w-[calc(100vw-2.5rem)] max-w-96 flex-col overflow-hidden rounded-2xl border border-fd-border bg-fd-popover shadow-2xl">
           {/* header */}
-          <div className="flex items-center justify-between gap-2 border-b border-fd-border px-4 py-3" style={{ backgroundColor: '#0d2d7d' }}>
-            <span className="flex items-center gap-2 font-semibold text-white">
-              <Sparkles className="size-4" style={{ color: '#f55c38' }} />
+          <div className="flex items-center justify-between gap-2 border-b border-relay-border bg-relay-brand-ink px-4 py-3">
+            <span className="flex items-center gap-2 font-display font-semibold text-white">
+              <Sparkles className="size-4 text-relay-signal" />
               Ask Relay
             </span>
             <div className="flex items-center gap-1">
@@ -143,8 +143,8 @@ export function FloatingChat() {
           <div className="flex-1 space-y-3 overflow-y-auto p-4" aria-live="polite">
             {messages.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <span className="flex size-12 items-center justify-center rounded-2xl text-white" style={{ backgroundColor: '#0d2d7d' }}>
-                  <Sparkles className="size-6" style={{ color: '#f55c38' }} />
+                <span className="flex size-12 items-center justify-center rounded-2xl bg-relay-brand-ink text-white">
+                  <Sparkles className="size-6 text-relay-signal" />
                 </span>
                 <p className="mt-3 text-sm font-medium text-fd-foreground">Ask about the AFE program</p>
                 <p className="mt-1 text-xs text-fd-muted-foreground">
@@ -169,22 +169,20 @@ export function FloatingChat() {
                   <div
                     className={
                       m.role === 'user'
-                        ? 'max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm px-3 py-2 text-sm text-white'
-                        : 'max-w-[85%] rounded-2xl rounded-bl-sm border border-fd-border bg-fd-card px-3 py-2 text-sm text-fd-foreground'
+                        ? 'max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm bg-relay-brand-ink px-3 py-2 text-sm text-white'
+                        : 'max-w-[85%] rounded-2xl rounded-bl-sm border border-relay-border bg-relay-surface px-3 py-2 text-sm text-relay-ink'
                     }
-                    style={m.role === 'user' ? { backgroundColor: '#0d2d7d' } : undefined}
                   >
                     {m.role === 'assistant' && m.content ? (
-                      <div className="prose prose-sm max-w-none text-sm leading-6 [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-2 [&_a]:[color:#f55c38] [&_pre]:overflow-x-auto [&_code]:text-[0.85em] [&>:first-child]:mt-0 [&>:last-child]:mb-0 dark:prose-invert">
+                      <div className="prose prose-sm max-w-none text-sm leading-6 [&_a]:font-medium [&_a]:text-relay-signal [&_a]:underline [&_a]:underline-offset-2 [&_pre]:overflow-x-auto [&_code]:text-[0.85em] [&>:first-child]:mt-0 [&>:last-child]:mb-0 dark:prose-invert">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
                       </div>
                     ) : m.role === 'user' ? (
                       m.content
                     ) : (
-                      <span className="inline-flex gap-1" aria-label="Generating response">
-                        <span className="size-1.5 animate-bounce rounded-full" style={{ backgroundColor: '#f55c38' }} />
-                        <span className="size-1.5 animate-bounce rounded-full [animation-delay:120ms]" style={{ backgroundColor: '#f55c38' }} />
-                        <span className="size-1.5 animate-bounce rounded-full [animation-delay:240ms]" style={{ backgroundColor: '#f55c38' }} />
+                      <span className="flex items-center gap-2 text-relay-ink-muted" aria-label="Generating response">
+                        <span className="relay-pulse h-0.5 w-8 rounded-full bg-relay-signal" aria-hidden />
+                        <span className="text-xs">Searching the handbook…</span>
                       </span>
                     )}
                   </div>
@@ -211,8 +209,7 @@ export function FloatingChat() {
               type="submit"
               disabled={!input.trim() || isStreaming}
               aria-label="Send"
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-white transition hover:opacity-90 disabled:opacity-40"
-              style={{ backgroundColor: '#f55c38' }}
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-relay-signal text-white transition hover:bg-relay-signal-strong disabled:opacity-40"
             >
               <ArrowUp className="size-5" />
             </button>
@@ -230,12 +227,15 @@ export function FloatingChat() {
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Close Ask Relay' : 'Open Ask Relay'}
         aria-expanded={open}
-        className="fixed bottom-5 right-5 z-[60] flex size-14 items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-black/5 transition hover:scale-105 dark:bg-fd-card dark:ring-white/10"
+        className="fixed bottom-5 right-5 z-[60] flex size-14 items-center justify-center rounded-full bg-relay-surface-raised shadow-[var(--relay-shadow-raised)] ring-1 ring-relay-border transition hover:scale-105 motion-reduce:hover:scale-100"
       >
         {open ? (
-          <X className="size-6" style={{ color: '#0d2d7d' }} />
+          <X className="size-6 text-relay-brand-ink" />
         ) : (
-          <img src="/relay-light-trim.png" alt="Ask Relay" className="size-9 object-contain" />
+          <>
+            <img src="/relay-light-trim.png" alt="Ask Relay" className="relay-logo--light size-9 object-contain" />
+            <img src="/relay-dark-trim.png" alt="Ask Relay" className="relay-logo--dark size-9 object-contain" />
+          </>
         )}
       </button>
     </>

@@ -16,13 +16,14 @@ import { HIKES, SEATTLE, type Difficulty, type Hike } from '@/lib/seattle-hikes-
  * API keys, so nothing can break the Vercel install.
  */
 
-const ORANGE = '#f55c38';
-const BLUE = '#0d2d7d';
+const ORANGE = 'var(--relay-signal)';
+const BLUE = 'var(--relay-brand-ink)';
 
+// Difficulty maps to the Field Guide accent tokens (positive/highlight/signal).
 const diffColor: Record<Difficulty, string> = {
-  Easy: '#1a9d5a',
-  Moderate: '#d9a300',
-  Hard: '#d94726',
+  Easy: 'var(--relay-positive)',
+  Moderate: 'var(--relay-highlight)',
+  Hard: 'var(--relay-signal)',
 };
 
 /** Great-circle distance in miles (haversine). */
@@ -187,7 +188,7 @@ export function SeattleHikes() {
             step={15}
             value={maxDrive}
             onChange={(e) => setMaxDrive(Number(e.target.value))}
-            className="w-44 accent-[#f55c38]"
+            className="w-44 accent-relay-signal"
           />
         </label>
 
@@ -196,7 +197,7 @@ export function SeattleHikes() {
             type="checkbox"
             checked={dogOnly}
             onChange={(e) => setDogOnly(e.target.checked)}
-            className="size-4 accent-[#f55c38]"
+            className="size-4 accent-relay-signal"
           />
           Dog-friendly only
         </label>

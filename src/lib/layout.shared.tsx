@@ -16,7 +16,7 @@ export function baseOptions(): BaseLayoutProps {
         children: (
           <Link
             href="/docs/new"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-fd-border px-3 py-1.5 text-sm font-medium text-fd-foreground transition-colors hover:bg-fd-accent"
+            className={buttonVariants({ variant: 'outline', size: 'sm' })}
           >
             <FilePlus className="size-4" />
             New Page
@@ -30,7 +30,7 @@ export function baseOptions(): BaseLayoutProps {
           <Link
             href="/ask-ai"
             data-tour="ask-ai"
-            className={buttonVariants({ size: 'sm' })}
+            className={buttonVariants({ variant: 'signal', size: 'sm' })}
           >
             <Sparkles className="size-3.5" />
             Ask AI

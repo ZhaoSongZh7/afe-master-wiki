@@ -2,114 +2,189 @@
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
 
-/* ------------------------------------------------------------------ */
-/* Amazon Future Engineers — brand theme                              */
-/* orange #f55c38 · blue #0d2d7d · white                              */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
+/* Relay Field Guide — semantic design tokens                         */
+/* Deep ink · warm paper · signal orange · cool accents               */
+/* Component code consumes these roles, never raw brand literals.     */
+/* ================================================================== */
+
+/* Light foundation ------------------------------------------------- */
 :root {
-  --afe-orange: #f55c38;
-  --afe-orange-dark: #d94726;
-  --afe-blue: #0d2d7d;
-  --afe-blue-light: #2a4bb0;
-  --afe-white: #ffffff;
+  --relay-canvas: #f7f3ea; /* warm paper */
+  --relay-surface: #fffcf6; /* primary reading surface */
+  --relay-surface-raised: #ffffff;
+  --relay-ink: #101b3d; /* primary text */
+  --relay-ink-muted: #4e5872; /* secondary text (AA on canvas) */
+  --relay-border: color-mix(in srgb, #101b3d 14%, transparent);
+  --relay-border-strong: color-mix(in srgb, #101b3d 26%, transparent);
+  --relay-brand-ink: #102a68; /* deep navy */
+  --relay-signal: #e94f2d; /* action orange */
+  --relay-signal-strong: #c63c1e;
+  --relay-signal-soft: color-mix(in srgb, #e94f2d 12%, transparent);
+  --relay-info: #2563b0; /* sky accent */
+  --relay-info-soft: color-mix(in srgb, #2563b0 12%, transparent);
+  --relay-positive: #1f8a5b; /* mint accent */
+  --relay-positive-soft: color-mix(in srgb, #1f8a5b 13%, transparent);
+  --relay-highlight: #b7791f; /* yellow accent */
+  --relay-highlight-soft: color-mix(in srgb, #b7791f 14%, transparent);
+  --relay-danger: #c4362b;
+  --relay-danger-soft: color-mix(in srgb, #c4362b 12%, transparent);
+  --relay-focus: #e94f2d;
+
+  /* Elevation — three levels only, paired with borders so hierarchy
+     survives dark + high-contrast modes. */
+  --relay-shadow-rest: 0 1px 2px rgba(16, 27, 61, 0.06);
+  --relay-shadow-raised: 0 8px 24px rgba(16, 27, 61, 0.1);
+  --relay-shadow-overlay: 0 24px 60px rgba(16, 27, 61, 0.18);
+
+  /* Radii */
+  --relay-radius-control: 10px;
+  --relay-radius-card: 16px;
+  --relay-radius-feature: 24px;
 }
 
-/* Light theme ------------------------------------------------------ */
-:root {
-  /* page background: near-white (kept lighter than the table-header
-     gray --color-fd-muted so table headers stay visible) */
-  --color-fd-background: #fcfcfd;
-  --color-fd-foreground: #10193a;
-
-  /* content cards stay white so they pop on the gray page */
-  --color-fd-card: #ffffff;
-  --color-fd-card-foreground: #10193a;
-
-  --color-fd-popover: #ffffff;
-  --color-fd-popover-foreground: #10193a;
-
-  --color-fd-muted: #f5f6fa;
-  --color-fd-muted-foreground: #5b6478;
-
-  --color-fd-secondary: #f2f4f9;
-  --color-fd-secondary-foreground: var(--afe-blue);
-
-  /* orange = primary interactive accent (links, active nav, buttons) */
-  --color-fd-primary: var(--afe-orange);
-  --color-fd-primary-foreground: #ffffff;
-
-  /* subtle orange tint for hover / active sidebar backgrounds */
-  --color-fd-accent: color-mix(in srgb, var(--afe-orange) 12%, transparent);
-  --color-fd-accent-foreground: var(--afe-orange-dark);
-
-  --color-fd-border: color-mix(in srgb, var(--afe-blue) 12%, transparent);
-  --color-fd-ring: var(--afe-orange);
-}
-
-/* Dark theme ------------------------------------------------------- */
+/* Dark foundation -------------------------------------------------- */
 .dark {
-  --color-fd-background: #0a1024;
-  --color-fd-foreground: #eef1f8;
+  --relay-canvas: #071226; /* deep night */
+  --relay-surface: #0d1b35;
+  --relay-surface-raised: #12244a;
+  --relay-ink: #f7f3ea;
+  --relay-ink-muted: #a6b0c9;
+  --relay-border: color-mix(in srgb, #ffffff 12%, transparent);
+  --relay-border-strong: color-mix(in srgb, #ffffff 22%, transparent);
+  --relay-brand-ink: #9db4e8;
+  --relay-signal: #ff7252;
+  --relay-signal-strong: #ff8a6e;
+  --relay-signal-soft: color-mix(in srgb, #ff7252 20%, transparent);
+  --relay-info: #7fb3f0;
+  --relay-info-soft: color-mix(in srgb, #7fb3f0 16%, transparent);
+  --relay-positive: #6fd3a0;
+  --relay-positive-soft: color-mix(in srgb, #6fd3a0 16%, transparent);
+  --relay-highlight: #f2c878;
+  --relay-highlight-soft: color-mix(in srgb, #f2c878 16%, transparent);
+  --relay-danger: #ff8a7a;
+  --relay-danger-soft: color-mix(in srgb, #ff8a7a 18%, transparent);
+  --relay-focus: #ff7252;
 
-  --color-fd-card: #0f1730;
-  --color-fd-card-foreground: #eef1f8;
+  --relay-shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --relay-shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --relay-shadow-overlay: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
 
-  --color-fd-popover: #0f1730;
-  --color-fd-popover-foreground: #eef1f8;
+/* ================================================================== */
+/* Map semantic roles → Fumadocs --color-fd-* aliases                 */
+/* so framework surfaces and custom surfaces stay coherent.           */
+/* ================================================================== */
+:root,
+.dark {
+  --color-fd-background: var(--relay-canvas);
+  --color-fd-foreground: var(--relay-ink);
 
-  --color-fd-muted: #141d3a;
-  --color-fd-muted-foreground: #9aa4bf;
+  --color-fd-card: var(--relay-surface);
+  --color-fd-card-foreground: var(--relay-ink);
 
-  --color-fd-secondary: #141d3a;
-  --color-fd-secondary-foreground: #c9d3f0;
+  --color-fd-popover: var(--relay-surface-raised);
+  --color-fd-popover-foreground: var(--relay-ink);
 
-  --color-fd-primary: var(--afe-orange);
+  --color-fd-muted: color-mix(in srgb, var(--relay-ink) 5%, var(--relay-surface));
+  --color-fd-muted-foreground: var(--relay-ink-muted);
+
+  --color-fd-secondary: color-mix(in srgb, var(--relay-ink) 4%, var(--relay-surface));
+  --color-fd-secondary-foreground: var(--relay-brand-ink);
+
+  /* signal orange = primary action */
+  --color-fd-primary: var(--relay-signal);
   --color-fd-primary-foreground: #ffffff;
 
-  --color-fd-accent: color-mix(in srgb, var(--afe-orange) 18%, transparent);
-  --color-fd-accent-foreground: #ffb59f;
+  --color-fd-accent: var(--relay-signal-soft);
+  --color-fd-accent-foreground: var(--relay-signal-strong);
 
-  --color-fd-border: color-mix(in srgb, #ffffff 10%, transparent);
-  --color-fd-ring: var(--afe-orange);
+  --color-fd-border: var(--relay-border);
+  --color-fd-ring: var(--relay-focus);
 }
 
-/* Light sidebar: a touch grayer than the page background.
-   The sidebar root uses bg-fd-card, so we override it here (scoped to
-   #nd-sidebar) without affecting content cards elsewhere. */
+/* Expose semantic tokens as Tailwind theme colors (bg-relay-signal, etc.) */
+@theme inline {
+  --color-relay-canvas: var(--relay-canvas);
+  --color-relay-surface: var(--relay-surface);
+  --color-relay-surface-raised: var(--relay-surface-raised);
+  --color-relay-ink: var(--relay-ink);
+  --color-relay-ink-muted: var(--relay-ink-muted);
+  --color-relay-border: var(--relay-border);
+  --color-relay-border-strong: var(--relay-border-strong);
+  --color-relay-brand-ink: var(--relay-brand-ink);
+  --color-relay-signal: var(--relay-signal);
+  --color-relay-signal-strong: var(--relay-signal-strong);
+  --color-relay-info: var(--relay-info);
+  --color-relay-positive: var(--relay-positive);
+  --color-relay-highlight: var(--relay-highlight);
+  --color-relay-danger: var(--relay-danger);
+  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ================================================================== */
+/* Typography — Manrope display, Inter body, system mono              */
+/* ================================================================== */
+body {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Display/interface type: headings, nav, controls */
+h1, h2, h3, h4, h5,
+.font-display,
+#nd-nav,
 #nd-sidebar {
-  --color-fd-card: #f4f5f7;
+  font-family: var(--font-display);
 }
 
-/* Sidebar tweaks so the dark sidebar reads as deep-blue, not gray */
-.dark #nd-sidebar {
-  --color-fd-card: #0d1428;
-  --color-fd-muted: #0f1730;
-  --color-fd-secondary: #141d3a;
-  --color-fd-muted-foreground: #9aa4bf;
+/* Readable article measure (65–75ch) on wide layouts */
+#nd-page article .prose {
+  max-width: 72ch;
 }
 
-/* Headings in brand blue (light) — keeps the orange for interaction  */
+/* Article rhythm */
+.prose {
+  line-height: 1.75;
+}
+
+/* Headings in brand ink (light); ink in dark. Route-guide hierarchy. */
 .prose h1,
 .prose h2,
 .prose h3,
 .prose h4 {
-  color: var(--afe-blue);
-  letter-spacing: -0.01em;
+  color: var(--relay-brand-ink);
+  letter-spacing: -0.015em;
+  font-family: var(--font-display);
+}
+.prose h1 {
+  font-weight: 800;
 }
 .dark .prose h1,
 .dark .prose h2,
 .dark .prose h3,
 .dark .prose h4 {
-  color: #eef1f8;
+  color: var(--relay-ink);
 }
 
-/* Page title (large h1) a touch bolder */
-.prose h1 {
-  font-weight: 700;
+/* ================================================================== */
+/* Framework surface tuning                                           */
+/* ================================================================== */
+
+/* Sidebar reads a touch distinct from the reading canvas. */
+#nd-sidebar {
+  --color-fd-card: color-mix(in srgb, var(--relay-ink) 3%, var(--relay-canvas));
+}
+.dark #nd-sidebar {
+  --color-fd-card: color-mix(in srgb, #000 22%, var(--relay-surface));
 }
 
-/* Logo theme switch — keyed on the .dark class (toggled by next-themes),
-   not Tailwind's dark: variant. Light logo by default; dark logo when .dark. */
+#nd-nav {
+  border-bottom-color: var(--relay-border);
+  background: color-mix(in srgb, var(--relay-canvas) 84%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+/* Logo theme switch — keyed on .dark (next-themes), not Tailwind dark:. */
 .relay-logo--dark {
   display: none;
 }
@@ -118,6 +193,19 @@
 }
 .dark .relay-logo--dark {
   display: block;
+}
+
+/* ================================================================== */
+/* Interaction + accessibility base                                   */
+/* ================================================================== */
+::selection {
+  background: color-mix(in srgb, var(--relay-signal) 26%, transparent);
+}
+
+:where(a, button, textarea, input, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--relay-focus);
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 html {
@@ -129,22 +217,60 @@ html > body[data-scroll-locked] {
   --removed-body-scroll-bar-size: 0px !important;
 }
 
-/* Shared interaction polish for the shadcn-style primitives. */
-::selection {
-  background: color-mix(in srgb, var(--afe-orange) 24%, transparent);
+/* Forced-colors / high-contrast: keep visible boundaries + focus. */
+@media (forced-colors: active) {
+  :where(a, button, [role='button']):focus-visible {
+    outline: 2px solid CanvasText;
+  }
+  .relay-bordered,
+  .prose table,
+  .prose th,
+  .prose td {
+    border: 1px solid CanvasText;
+  }
 }
 
-:where(a, button, textarea, input):focus-visible {
-  outline: 2px solid var(--color-fd-ring);
-  outline-offset: 2px;
+/* ================================================================== */
+/* Motion — explanatory only, ≤300ms, reduced-motion safe             */
+/* ================================================================== */
+.relay-enter {
+  animation: relay-enter 200ms ease both;
+}
+@keyframes relay-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-#nd-nav {
-  border-bottom-color: color-mix(in srgb, var(--afe-blue) 10%, transparent);
-  background: color-mix(in srgb, var(--color-fd-background) 86%, transparent);
-  backdrop-filter: blur(16px);
+/* Relay-line streaming pulse (replaces bouncing dots) */
+.relay-pulse {
+  animation: relay-pulse 1200ms ease-in-out infinite;
+}
+@keyframes relay-pulse {
+  0%, 100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
-.dark #nd-nav {
-  border-bottom-color: color-mix(in srgb, #ffffff 10%, transparent);
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .relay-enter,
+  .relay-pulse {
+    animation: none !important;
+  }
 }

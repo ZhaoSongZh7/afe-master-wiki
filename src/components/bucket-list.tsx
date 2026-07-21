@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import { Check } from 'lucide-react';
 import { fireConfetti } from '@/lib/confetti';
 
@@ -15,7 +15,23 @@ import { fireConfetti } from '@/lib/confetti';
  *   <BucketList storageKey="relay:seattle-bucket" items={["Ride the ferry", ...]} />
  */
 
-const ORANGE = '#f55c38';
+const ORANGE = 'var(--relay-signal)';
+
+function subscribe(key: string, onChange: () => void) {
+  const handler = (e: StorageEvent) => {
+    if (e.key === key) onChange();
+  };
+  window.addEventListener('storage', handler);
+  return () => window.removeEventListener('storage', handler);
+}
+
+function parse(raw: string): Record<string, boolean> {
+  try {
+    return JSON.parse(raw) as Record<string, boolean>;
+  } catch {
+    return {};
+  }
+}
 
 export function BucketList({
   storageKey,
@@ -26,19 +42,20 @@ export function BucketList({
   items: string[];
   title?: string;
 }) {
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
-  const [mounted, setMounted] = useState(false);
+  // Persisted state via useSyncExternalStore — no setState-in-effect, no
+  // read-during-render ref (both flagged by the React Compiler).
+  const raw = useSyncExternalStore(
+    (onChange) => subscribe(storageKey, onChange),
+    () => (typeof window === 'undefined' ? '{}' : window.localStorage.getItem(storageKey) ?? '{}'),
+    () => '{}',
+  );
+  const mounted = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
+  const checked = useMemo(() => parse(raw), [raw]);
   const prevDone = useRef(0);
-
-  useEffect(() => {
-    setMounted(true);
-    try {
-      const raw = window.localStorage.getItem(storageKey);
-      setChecked(raw ? JSON.parse(raw) : {});
-    } catch {
-      setChecked({});
-    }
-  }, [storageKey]);
 
   const done = useMemo(() => items.filter((it) => checked[it]).length, [checked, items]);
 
@@ -51,15 +68,16 @@ export function BucketList({
 
   const toggle = useCallback(
     (item: string) => {
-      setChecked((prev) => {
-        const next = { ...prev, [item]: !prev[item] };
-        try {
-          window.localStorage.setItem(storageKey, JSON.stringify(next));
-        } catch {
-          /* ignore */
-        }
-        return next;
-      });
+      const current = parse(
+        typeof window === 'undefined' ? '{}' : window.localStorage.getItem(storageKey) ?? '{}',
+      );
+      const next = { ...current, [item]: !current[item] };
+      try {
+        window.localStorage.setItem(storageKey, JSON.stringify(next));
+        window.dispatchEvent(new StorageEvent('storage', { key: storageKey }));
+      } catch {
+        /* ignore */
+      }
     },
     [storageKey],
   );
