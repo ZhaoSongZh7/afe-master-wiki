@@ -29,45 +29,50 @@ The CDK stack lives in `infra/` and creates:
 
 ## Prerequisites
 
-- Node.js 20+ (installed via `nvm`)
+- Node.js 20+
 - AWS CLI v2
-- An IAM user with `AdministratorAccess` on the target account
+- Approved temporary credentials for a non-production AWS account
+- A least-privilege deployment role authorized for this stack
+
+<Callout type="warn" title="Verify the target before deploying">
+  AWS deployments modify account resources. Treat an unknown account as production,
+  verify your role and account ID, and obtain explicit approval before changing a
+  production environment. Do not create long-lived access keys or grant yourself
+  `AdministratorAccess` to bypass a permission error.
+</Callout>
 
 ## Step-by-step
 
-### 1. Create an IAM user (one-time, in AWS Console)
+### 1. Authenticate through the approved credential provider
 
-1. Go to **IAM → Users → Create user**
-2. Name: `cdk-deployer`
-3. Attach policy: **AdministratorAccess**
-4. Go to **Security credentials → Create access key**
-5. Use case: **"Local code"**
-6. Save the Access Key ID and Secret Access Key
+Use your organization's SSO or temporary-credential workflow. If you do not have an
+approved CDK deployment role, ask the account owner for one scoped to this stack.
+Do not store credentials in this repository or configure persistent IAM-user keys.
 
-### 2. Export credentials in your terminal
-
-```bash
-export AWS_ACCESS_KEY_ID="your-key-id"
-export AWS_SECRET_ACCESS_KEY="your-secret-key"
-export AWS_REGION="us-east-1"
-```
-
-Verify it's working:
+Verify the active identity and region:
 
 ```bash
 aws sts get-caller-identity
+aws configure get region
 ```
 
-You should see your IAM user ARN, **not** `DevSpacesEnvironmentRole`.
+Confirm that the account, role, and region are the intended non-production target.
 
-> **Note:** Exports don't persist between terminal sessions. You'll need to re-export when you open a new terminal.
+### 2. Install dependencies and review the change
+
+```bash
+cd infra
+npm ci
+npx cdk diff
+```
+
+Review the diff before deploying. `cdk bootstrap` and `cdk deploy` create or update
+AWS resources.
 
 ### 3. Deploy the CDK stack
 
 ```bash
-cd infra
-npm install
-npx cdk bootstrap    # first time only
+npx cdk bootstrap    # first time only for this account and region
 npx cdk deploy
 ```
 
@@ -87,15 +92,18 @@ aws bedrock list-inference-profiles \
   --output text
 ```
 
-### Inference profiles (important!)
+### Inference profiles
 
-Newer models like Sonnet 4.5+ require a **cross-region inference profile** ID instead of the raw model ID:
+Model identifiers and inference-profile requirements vary by model, account, and
+region. Query the target account immediately before configuration rather than
+assuming the example remains current:
 
-| Raw model ID | Inference profile (use this) |
+| Example raw model ID | Example inference profile |
 |---|---|
 | `anthropic.claude-sonnet-4-5-20250929-v1:0` | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` |
 
-If you use the raw ID, you'll get: `ValidationException: Invocation with on-demand throughput isn't supported`
+An unsupported raw model ID can produce `ValidationException: Invocation with
+on-demand throughput isn't supported`.
 
 ### Test from the CLI
 
@@ -115,17 +123,19 @@ cat /tmp/output.json
 
 ### Model access
 
-Model access is **automatic** — you no longer need to manually enable models in the Bedrock console. Just make sure your IAM user/role has the `bedrock:InvokeModel` permission (our CDK stack handles this).
+Model availability and access requirements can vary. Follow the target account's
+approval process and ensure the runtime role has only the required
+`bedrock:InvokeModel` permissions.
 
 ## Gotchas we ran into
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
-| `AccessDeniedException` on `cdk bootstrap` | DevSpaces role has no CloudFormation perms | Export your IAM user credentials |
-| `Invalid base64` on `--body` | CLI treats body as a blob | Use `fileb:///path/to/file.json` not inline JSON |
-| `Invalid model identifier` | Wrong model version date | Run `aws bedrock list-inference-profiles` to get exact IDs |
-| `ThrottlingException: Too many tokens` | Account rate limit hit | Wait and retry, or request quota increase in Service Quotas |
-| Credentials not working after restart | Env vars don't persist | Re-export or use `aws configure` for persistence |
+| `AccessDeniedException` on `cdk bootstrap` | Active role lacks required deployment permissions | Confirm the intended role and ask the account owner for the minimum missing permissions |
+| `Invalid base64` on `--body` | CLI treats body as a blob | Use `fileb:///path/to/file.json` rather than inline JSON |
+| `Invalid model identifier` | Model or inference-profile ID is unavailable | Query the target account for currently available IDs |
+| `ThrottlingException: Too many tokens` | Account rate limit hit | Wait and retry, or request a quota increase through the approved process |
+| Credentials expired | Temporary session ended | Refresh credentials through the approved SSO or credential provider |
 
 ## How credentials flow in production
 

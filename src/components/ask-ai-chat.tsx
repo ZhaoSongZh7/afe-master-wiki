@@ -31,11 +31,12 @@ export function AskAiChat() {
 
     const requestId = crypto.randomUUID();
     const assistantId = `${requestId}-assistant`;
+    const userMessage: Message = { id: requestId, role: 'user', content: message };
+    const conversation = [...messages, userMessage];
     setInput('');
     setIsStreaming(true);
-    setMessages((current) => [
-      ...current,
-      { id: requestId, role: 'user', content: message },
+    setMessages([
+      ...conversation,
       { id: assistantId, role: 'assistant', content: '' },
     ]);
 
@@ -43,10 +44,18 @@ export function AskAiChat() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({
+          messages: conversation.map(({ role, content }) => ({ role, content })),
+        }),
       });
 
-      if (!response.ok || !response.body) {
+      if (!response.ok) {
+        const result = (await response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        throw new Error(result?.error ?? 'Unable to start the response stream.');
+      }
+      if (!response.body) {
         throw new Error('Unable to start the response stream.');
       }
 
@@ -66,11 +75,15 @@ export function AskAiChat() {
           ),
         );
       }
-    } catch {
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Something went wrong. Please try again.';
       setMessages((current) =>
         current.map((item) =>
           item.id === assistantId
-            ? { ...item, content: 'Something went wrong. Please try again.' }
+            ? { ...item, content: errorMessage }
             : item,
         ),
       );

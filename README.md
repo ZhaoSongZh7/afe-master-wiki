@@ -1,70 +1,50 @@
 # Relay 🏃‍♀️➡️🏃‍♂️
 
-**One source of truth for every AFE intern — read the wiki, or just ask.**
-
-Built for the **AFE Intern Hackathon 2026: Pay it Forward**.
-
----
-
-## The problem
-
-Remember your first week? AFE information is scattered — the intern wiki, AUTA
-pages, Slack channels, SharePoint docs, alumni notes, half-remembered advice from
-a mentor. Finding the one thing you need means knowing *where* to look and *who*
-to ask. New interns burn days re-learning what past classes already figured out.
+A searchable AFE intern handbook and source-grounded assistant, built for the **AFE Intern Hackathon 2026: Pay it Forward**.
 
 ## What Relay does
 
-Relay pulls all existing AFE knowledge into **one searchable home**, and puts an
-**AI chatbot** on top of it so you can get answers in plain English.
+AFE guidance spans program wikis, AUTA pages, HR systems, and technical learning paths. Relay provides:
 
-- 📚 **Unified wiki** — onboarding, tooling, role guidelines, evaluation guidance,
-  support resources, FAQs, and event info, consolidated and organized in one place.
-- 🤖 **Ask Relay** — an AI assistant grounded in the wiki content. Ask "How do I
-  set up my Brazil workspace?" or "Who do I talk to about my evaluation?" and get a
-  direct, sourced answer instead of a scavenger hunt.
-- 🔎 **Search that works** — find the right page fast, whether you browse or query.
+- a structured wiki for onboarding, tooling, evaluations, support, and community;
+- search across the handbook; and
+- an AI assistant grounded in repository content, with links back to sources.
 
-- ✍️ **Anyone can contribute** — true to "pay it forward," any user can add or edit
-  wiki content. An **AI reviewer agent** screens submissions and auto-approves solid,
-  well-sourced contributions (or rejects/flags low-quality ones), so the wiki grows
-  without a human bottleneck.
+Relay is a navigation and summarization layer. Official AFE, AUTA, and HR systems remain authoritative for current policy, eligibility, dates, and personal HR information. See [Canonical Sources](content/docs/canonical-sources.mdx).
 
-Two ways in, one body of knowledge: **skim it like a wiki, or talk to it like a person.**
+## Source integrity and privacy
 
-## Stretch features
+- Attach an official source to factual contributions and recheck time-sensitive details.
+- Prefer the consolidated 2026 AFE Intern Home over deprecated manager training, old vNHO material, or 2024 calendars.
+- Prefer official HR and AUTA guidance over unofficial financial guides.
+- Never ingest personal data, private conversations, or Amazon-confidential material into a personal database.
+- Do not export Discord with a browser extension or ingest private chats without explicit AFE program-owner, Privacy, Legal, and Security approval.
 
-- 🔄 **Self-updating wiki** — an AI pipeline watches high-churn sources that interns
-  actually live in (the intern Discord, AFE Slack channels, etc.), extracts durable
-  knowledge from the noise, and proposes wiki updates automatically — keeping the
-  content fresh without anyone having to babysit it.
-- 🧩 **Relay as a skill** — package Relay's knowledge + retrieval as a skill/tool for
-  AI assistants (e.g. Claude Code, Q, internal agents), so interns can pull AFE
-  answers directly from whatever tool they're already working in.
-
-## Why it "pays it forward"
-
-Every question a Relay user asks — and every gap they find — makes the resource
-better for the next class. Instead of each cohort re-discovering the same answers
-the hard way, the knowledge compounds. We're not just documenting our own summer;
-we're building the guide we wish we'd had, and handing it to whoever comes next.
-
-## How it works
-
-1. **Content layer** — AFE documentation aggregated into a structured, browsable wiki.
-2. **Search + browse** — navigate by topic or search across everything at once.
-3. **AI chat** — the chatbot retrieves relevant wiki content and answers questions
-   grounded in it, with pointers back to the source page.
+Authenticated source pages are linked rather than mirrored when their contents cannot be reviewed safely. Contributors should summarize only the minimum durable information needed and keep the authoritative link visible.
 
 ## Getting started
 
-_Coming together during the hackathon — setup and run instructions land here as the
-project builds out._
+```bash
+npm ci
+npm run dev
+```
+
+For a non-watching validation run:
+
+```bash
+npm run types:check
+npm run lint
+npm run build
+```
+
+Infrastructure lives in `infra/`; review [CDK & Bedrock Setup](content/docs/cdk-bedrock-setup.md) before making AWS changes. Use approved temporary, least-privilege credentials and verify the target account first.
+
+## How it works
+
+1. MDX content under `content/docs/` supplies the browsable knowledge base.
+2. Fumadocs indexes the content for navigation and search.
+3. The chat API retrieves relevant content and invokes Amazon Bedrock.
 
 ## Team
 
 _Team name and members: TBD — add before submitting on Hack Amazon._
-
----
-
-_Built with ❤️ for every AFE intern who comes after us._
