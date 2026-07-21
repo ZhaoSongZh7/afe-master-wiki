@@ -48,11 +48,11 @@ export default function HomePage() {
           className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl"
           style={{ color: '#0d2d7d' }}
         >
-          <span className="dark:text-white">The AFE Handbook</span>
+          <span className="dark:text-white">Relay</span>
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-fd-muted-foreground">
-          Everything you need for the program — onboarding, benefits, logistics,
-          development, and community. All in one place.
+          Your handbook for the Amazon Future Engineers program — onboarding,
+          benefits, logistics, development, and community, all in one place.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link

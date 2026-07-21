@@ -1,4 +1,4 @@
-export const appName = 'Amazon Future Engineers';
+export const appName = 'Relay';
 export const docsRoute = '/docs';
 export const docsImageRoute = '/og/docs';
 export const docsContentRoute = '/llms.mdx/docs';

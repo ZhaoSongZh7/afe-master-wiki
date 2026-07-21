@@ -1,4 +1,5 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
 import { appName } from './shared';
 
@@ -12,7 +13,7 @@ export function baseOptions(): BaseLayoutProps {
             style={{ backgroundColor: '#f55c38' }}
             aria-hidden
           >
-            A
+            R
           </span>
           <span style={{ color: '#0d2d7d' }} className="dark:text-white">
             {appName}
@@ -21,17 +22,22 @@ export function baseOptions(): BaseLayoutProps {
       ),
     },
     // "Ask AI" entry point (top bar) — wired to the Bedrock chatbot later.
+    // Uses a `custom` item so we render a single-root element (no unkeyed
+    // [icon, text] array, which triggers React's missing-key warning).
     links: [
       {
-        type: 'button',
-        text: (
-          <span className="inline-flex items-center gap-1.5">
+        type: 'custom',
+        secondary: true,
+        children: (
+          <Link
+            href="/docs"
+            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            style={{ backgroundColor: '#f55c38' }}
+          >
             <Sparkles className="size-4" />
             Ask AI
-          </span>
+          </Link>
         ),
-        url: '/docs',
-        secondary: true,
       },
     ],
   };
