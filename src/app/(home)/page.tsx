@@ -23,6 +23,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { PageFrame } from '@/components/ui/page-frame';
 import { SectionHeading } from '@/components/ui/section-heading';
+import { SiteFooter } from '@/components/site-footer';
 import { cn } from '@/lib/cn';
 
 type Accent = 'info' | 'positive' | 'highlight';
@@ -62,6 +63,7 @@ const orientationNodes = [
 
 export default function HomePage() {
   return (
+    <>
     <PageFrame motif="route-map" className="flex flex-1 flex-col items-center px-4 py-10 sm:px-6 sm:py-14">
       {/* ---- Asymmetric hero -------------------------------------------- */}
       <section className="grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
@@ -198,5 +200,7 @@ export default function HomePage() {
 
       <ProductTour />
     </PageFrame>
+    <SiteFooter />
+    </>
   );
 }

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Sparkles, FilePlus } from 'lucide-react';
 import { RelayLogo } from '@/components/logo';
 import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/cn';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -16,7 +17,7 @@ export function baseOptions(): BaseLayoutProps {
         children: (
           <Link
             href="/docs/new"
-            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'mb-2')}
           >
             <FilePlus className="size-4" />
             New Page
