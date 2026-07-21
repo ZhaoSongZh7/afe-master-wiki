@@ -87,7 +87,7 @@ export default function HomePage() {
             <Link href="/ask-ai" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
               Ask Relay
             </Link>
-            <TourButton className={buttonVariants({ variant: 'ghost', size: 'lg' })} />
+            <TourButton className={buttonVariants({ variant: 'outline', size: 'lg' })} />
           </div>
         </div>
 

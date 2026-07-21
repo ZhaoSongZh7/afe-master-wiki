@@ -14,28 +14,26 @@ export function baseOptions(): BaseLayoutProps {
       {
         type: 'custom',
         secondary: true,
+        // Both actions in one row so they sit horizontally adjacent in the top
+        // nav AND in the docs sidebar footer (which otherwise stacks links).
         children: (
-          <Link
-            href="/docs/new"
-            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'mb-2')}
-          >
-            <FilePlus className="size-4" />
-            New Page
-          </Link>
-        ),
-      },
-      {
-        type: 'custom',
-        secondary: true,
-        children: (
-          <Link
-            href="/ask-ai"
-            data-tour="ask-ai"
-            className={buttonVariants({ variant: 'signal', size: 'sm' })}
-          >
-            <Sparkles className="size-3.5" />
-            Ask AI
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/docs/new"
+              className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'flex-1')}
+            >
+              <FilePlus className="size-4" />
+              New Page
+            </Link>
+            <Link
+              href="/ask-ai"
+              data-tour="ask-ai"
+              className={cn(buttonVariants({ variant: 'signal', size: 'sm' }), 'flex-1')}
+            >
+              <Sparkles className="size-3.5" />
+              Ask AI
+            </Link>
+          </div>
         ),
       },
     ],
