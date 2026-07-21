@@ -2,10 +2,11 @@
  * AFE Relay Chat Lambda
  *
  * POST /chat
- * Body: { "message": "How do I get Bedrock access?", "history": [] }
+ * Body: { "message": "...", "history": [], "context": "..." }
  * Response: { "reply": "..." }
  *
- * - Pulls wiki context from S3 (if available)
+ * - Accepts wiki context from the caller (Next.js frontend does the lookup)
+ * - Falls back to S3 wiki-context.md if no context is passed
  * - Sends the user's message + context to Bedrock (Claude Sonnet 4.5)
  * - Returns a formatted response
  */
@@ -22,24 +23,20 @@ const s3 = new S3Client({});
 const MODEL_ID = process.env.MODEL_ID;
 const BUCKET_NAME = process.env.BUCKET_NAME;
 
-const SYSTEM_PROMPT = `You are the AFE Relay assistant — a helpful guide for Amazon Future Engineer (AFE) interns.
+const SYSTEM_PROMPT = `You are Ask AFE, the Amazon Future Engineers wiki assistant.
 
-Your job is to answer questions about:
-- The AFE program (onboarding, logistics, benefits)
-- AWS services and tooling
-- Team norms and communication
-- Handoff knowledge from past interns
+You answer questions using the wiki content provided below. This content comes directly from the AFE intern handbook — treat it as the authoritative source.
 
 Rules:
+- Answer based on the wiki content provided. Present it directly and confidently.
+- If the wiki content contains the answer, DO NOT say "I don't have this page" or "I can't find it." Just present the information.
 - Be concise and practical. Interns are busy.
-- Format responses with markdown when it helps readability (bullet points, code blocks, headers).
-- If you don't know something, say so clearly. Don't make things up.
-- When relevant, suggest what the intern should search for or who to ask.
-- Keep a friendly, supportive tone — you're their helpful teammate.`;
+- Format responses with markdown when it helps readability.
+- If the wiki content genuinely doesn't cover the question, say so and suggest where to look.
+- Keep a friendly, supportive tone.`;
 
 /**
- * Try to load wiki context from S3.
- * Files are stored as wiki-context.md in the bucket root.
+ * Try to load wiki context from S3 as a fallback.
  */
 async function loadWikiContext() {
   try {
@@ -51,13 +48,11 @@ async function loadWikiContext() {
     );
     return await resp.Body.transformToString();
   } catch (err) {
-    // No context file yet — that's fine
     return null;
   }
 }
 
 export async function handler(event) {
-  // Parse request
   let body;
   try {
     body = JSON.parse(event.body || "{}");
@@ -70,19 +65,19 @@ export async function handler(event) {
     return response(400, { error: "'message' field is required" });
   }
 
-  // Build conversation history
   const history = Array.isArray(body.history) ? body.history : [];
 
-  // Load wiki context from S3
-  const wikiContext = await loadWikiContext();
+  // Prefer context passed from the frontend, fall back to S3
+  const wikiContext = (body.context || "").trim() || await loadWikiContext();
 
-  // Build the system prompt with wiki context if available
+  // Build system prompt with wiki context
   let systemPrompt = SYSTEM_PROMPT;
   if (wikiContext) {
-    systemPrompt += `\n\nHere is the current wiki knowledge base for reference:\n\n---\n${wikiContext}\n---`;
+    systemPrompt += `\n\nWIKI CONTENT:\n\n${wikiContext}`;
+  } else {
+    systemPrompt += `\n\nNo wiki content was found for this question. Answer based on general AFE intern knowledge, and let the user know the wiki doesn't cover this topic yet.`;
   }
 
-  // Build messages array
   const messages = [
     ...history.map((msg) => ({
       role: msg.role,
@@ -91,7 +86,6 @@ export async function handler(event) {
     { role: "user", content: message },
   ];
 
-  // Call Bedrock
   try {
     const bedrockBody = JSON.stringify({
       anthropic_version: "bedrock-2023-05-31",
