@@ -9,6 +9,7 @@ import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/components/mdx';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
+import { EditPageButton } from '@/components/edit-page-button';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
@@ -16,6 +17,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   if (!page) notFound();
 
   const MDX = page.data.body;
+  const slug = page.slugs.length > 0 ? page.slugs[page.slugs.length - 1] : 'index';
 
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
@@ -29,6 +31,11 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
           })}
         />
       </DocsBody>
+      <EditPageButton
+        slug={slug}
+        title={page.data.title}
+        description={page.data.description}
+      />
     </DocsPage>
   );
 }

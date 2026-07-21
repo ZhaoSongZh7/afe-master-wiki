@@ -12,7 +12,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@aws-sdk/client-bedrock-runtime": "3.1091.0",
+    "@aws-sdk/client-bedrock-runtime": "3.1085.0",
     "cnfast": "^0.0.8",
     "fumadocs-core": "16.11.5",
     "fumadocs-mdx": "15.2.0",

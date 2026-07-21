@@ -1,6 +1,6 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import Link from 'next/link';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, FilePlus } from 'lucide-react';
 import { RelayLogo } from '@/components/logo';
 
 export function baseOptions(): BaseLayoutProps {
@@ -9,6 +9,19 @@ export function baseOptions(): BaseLayoutProps {
       title: <RelayLogo className="h-10" />,
     },
     links: [
+      {
+        type: 'custom',
+        secondary: true,
+        children: (
+          <Link
+            href="/docs/new"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-fd-border px-3 py-1.5 text-sm font-medium text-fd-foreground transition-colors hover:bg-fd-accent"
+          >
+            <FilePlus className="size-4" />
+            New Page
+          </Link>
+        ),
+      },
       {
         type: 'custom',
         secondary: true,
