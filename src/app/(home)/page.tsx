@@ -11,6 +11,7 @@ import {
   Users,
 } from 'lucide-react';
 import { RelayLogo } from '@/components/logo';
+import { DayOneChecklist } from '@/components/day-one-checklist';
 
 const categories = [
   {
@@ -96,6 +97,8 @@ export default function HomePage() {
             Read the FAQ
           </Link>
         </div>
+
+        <DayOneChecklist variant="widget" />
       </div>
 
       <div className="mt-16 grid w-full max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,5 +1,6 @@
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
+import { DayOneChecklist } from '@/components/day-one-checklist';
 import {
   Rocket,
   Wallet,
@@ -62,6 +63,7 @@ export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,
     ...icons,
+    DayOneChecklist,
     ...components,
   } satisfies MDXComponents;
 }
