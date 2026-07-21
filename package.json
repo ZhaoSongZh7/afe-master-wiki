@@ -2,7 +2,6 @@
   "name": "afe-wiki",
   "version": "0.0.6",
   "private": true,
-  "type": "module",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -12,7 +11,9 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@aws-sdk/client-bedrock-runtime": "3.1085.0",
+    "@aws-sdk/client-bedrock-runtime": "3.1091.0",
+    "@radix-ui/react-progress": "1.1.13",
+    "class-variance-authority": "0.7.1",
     "cnfast": "^0.0.8",
     "fumadocs-core": "16.11.5",
     "fumadocs-mdx": "15.2.0",

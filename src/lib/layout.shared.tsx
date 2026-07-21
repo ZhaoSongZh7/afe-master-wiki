@@ -2,6 +2,7 @@ import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import Link from 'next/link';
 import { Sparkles, FilePlus } from 'lucide-react';
 import { RelayLogo } from '@/components/logo';
+import { buttonVariants } from '@/components/ui/button';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -28,10 +29,9 @@ export function baseOptions(): BaseLayoutProps {
         children: (
           <Link
             href="/ask-ai"
-            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
-            style={{ backgroundColor: '#f55c38' }}
+            className={buttonVariants({ size: 'sm' })}
           >
-            <Sparkles className="size-4" />
+            <Sparkles className="size-3.5" />
             Ask AI
           </Link>
         ),

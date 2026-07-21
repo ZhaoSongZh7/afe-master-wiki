@@ -1,9 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { Check, PartyPopper } from 'lucide-react';
-import { fireConfetti } from '@/lib/confetti';
 
 /**
  * Day-One Checklist — interactive onboarding tracker.
@@ -35,14 +34,79 @@ const ITEMS: Item[] = [
 const ORANGE = '#f55c38';
 const BLUE = '#0d2d7d';
 
-function readState(): Record<string, boolean> {
-  if (typeof window === 'undefined') return {};
+function readStateSnapshot(): string {
+  if (typeof window === 'undefined') return '{}';
+  return window.localStorage.getItem(STORAGE_KEY) ?? '{}';
+}
+
+function parseState(raw: string): Record<string, boolean> {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
+    return JSON.parse(raw) as Record<string, boolean>;
   } catch {
     return {};
   }
+}
+
+function subscribeToState(onStoreChange: () => void) {
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === STORAGE_KEY) onStoreChange();
+  };
+  window.addEventListener('storage', onStorage);
+  return () => window.removeEventListener('storage', onStorage);
+}
+
+/** Self-contained confetti burst — no dependencies. */
+function fireConfetti() {
+  if (typeof document === 'undefined') return;
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText =
+    'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    canvas.remove();
+    return;
+  }
+
+  const colors = [ORANGE, BLUE, '#f5a623', '#ffffff', '#2a4bb0'];
+  const N = 140;
+  const parts = Array.from({ length: N }, (_, i) => ({
+    x: canvas.width / 2,
+    y: canvas.height / 3,
+    // spread outward + up, varied by index (no Math.random dependency concerns)
+    vx: Math.cos((i / N) * Math.PI * 2) * (4 + (i % 7)),
+    vy: Math.sin((i / N) * Math.PI * 2) * (4 + (i % 5)) - 6,
+    size: 5 + (i % 4) * 2,
+    color: colors[i % colors.length],
+    rot: (i / N) * Math.PI * 2,
+    vr: (i % 2 ? 1 : -1) * 0.2,
+  }));
+
+  let frame = 0;
+  const gravity = 0.22;
+  function tick() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const p of parts) {
+      p.vy += gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, 1 - frame / 120);
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      ctx.restore();
+    }
+    frame += 1;
+    if (frame < 120) requestAnimationFrame(tick);
+    else canvas.remove();
+  }
+  requestAnimationFrame(tick);
 }
 
 function ProgressRing({ done, total }: { done: number; total: number }) {
@@ -73,20 +137,18 @@ function ProgressRing({ done, total }: { done: number; total: number }) {
 }
 
 export function DayOneChecklist({ variant = 'full' }: { variant?: 'full' | 'widget' }) {
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
-  const [mounted, setMounted] = useState(false);
+  const stateSnapshot = useSyncExternalStore(
+    subscribeToState,
+    readStateSnapshot,
+    () => '{}',
+  );
+  const checked = useMemo(() => parseState(stateSnapshot), [stateSnapshot]);
+  const mounted = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
   const prevDone = useRef(0);
-
-  // hydrate from storage + subscribe to cross-tab / cross-component updates
-  useEffect(() => {
-    setMounted(true);
-    setChecked(readState());
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY) setChecked(readState());
-    };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, []);
 
   const done = useMemo(() => ITEMS.filter((i) => checked[i.id]).length, [checked]);
 
@@ -99,17 +161,15 @@ export function DayOneChecklist({ variant = 'full' }: { variant?: 'full' | 'widg
   }, [done, mounted]);
 
   const toggle = useCallback((id: string) => {
-    setChecked((prev) => {
-      const next = { ...prev, [id]: !prev[id] };
-      try {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-        // notify same-tab listeners (storage event only fires cross-tab)
-        window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
-      } catch {
-        /* ignore */
-      }
-      return next;
-    });
+    const current = parseState(readStateSnapshot());
+    const next = { ...current, [id]: !current[id] };
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      // notify same-tab listeners (storage event only fires cross-tab)
+      window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   // avoid hydration mismatch: render neutral until mounted
@@ -220,7 +280,6 @@ export function DayOneChecklist({ variant = 'full' }: { variant?: 'full' | 'widg
             } catch {
               /* ignore */
             }
-            setChecked({});
           }}
           className="mt-4 text-sm text-fd-muted-foreground hover:text-fd-foreground hover:underline"
         >

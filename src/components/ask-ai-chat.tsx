@@ -4,7 +4,10 @@ import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { ArrowLeft, ArrowUp, BookOpen, Check, ClipboardCopy, Download, Sparkles, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { ArrowLeft, ArrowUp, BookOpen, Check, ClipboardCopy, Download, Sparkles, Square, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 type Message = {
   id: string;
@@ -23,14 +26,16 @@ const suggestions = [
 export function AskAiChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
   const [reactions, setReactions] = useState<Record<string, Reaction>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const isStreaming = streamingMessageId !== null;
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: isStreaming ? 'auto' : 'smooth' });
+  }, [isStreaming, messages]);
 
   async function sendMessage(rawMessage: string) {
     const message = rawMessage.trim();
@@ -38,10 +43,12 @@ export function AskAiChat() {
 
     const requestId = crypto.randomUUID();
     const assistantId = `${requestId}-assistant`;
+    const abortController = new AbortController();
     const userMessage: Message = { id: requestId, role: 'user', content: message };
     const conversation = [...messages, userMessage];
+    abortControllerRef.current = abortController;
     setInput('');
-    setIsStreaming(true);
+    setStreamingMessageId(assistantId);
     setMessages([
       ...conversation,
       { id: assistantId, role: 'assistant', content: '' },
@@ -54,6 +61,7 @@ export function AskAiChat() {
         body: JSON.stringify({
           messages: conversation.map(({ role, content }) => ({ role, content })),
         }),
+        signal: abortController.signal,
       });
 
       if (!response.ok) {
@@ -83,19 +91,24 @@ export function AskAiChat() {
         );
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Something went wrong. Please try again.';
       setMessages((current) =>
-        current.map((item) =>
-          item.id === assistantId
-            ? { ...item, content: errorMessage }
-            : item,
-        ),
+        current.map((item) => {
+          if (item.id !== assistantId) return item;
+          if (abortController.signal.aborted) {
+            return item.content ? item : { ...item, content: '_Response stopped._' };
+          }
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : 'Something went wrong. Please try again.';
+          return { ...item, content: errorMessage };
+        }),
       );
     } finally {
-      setIsStreaming(false);
+      if (abortControllerRef.current === abortController) {
+        abortControllerRef.current = null;
+      }
+      setStreamingMessageId((current) => current === assistantId ? null : current);
     }
   }
 
@@ -112,19 +125,24 @@ export function AskAiChat() {
   }
 
   return (
-    <main className="relative flex h-dvh flex-col overflow-hidden bg-[#f7f8fa] dark:bg-fd-background">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-[#e8efff] via-[#f2f5fd] to-transparent dark:from-[#121d40] dark:via-transparent" />
-      <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-[#5272c9]/10 blur-3xl dark:bg-[#5272c9]/15" />
+    <main className="relative flex h-dvh flex-col overflow-hidden bg-fd-background">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(ellipse_at_top,_rgba(245,92,56,0.16),_transparent_65%)] dark:bg-[radial-gradient(ellipse_at_top,_rgba(245,92,56,0.14),_transparent_65%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(13,45,125,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(13,45,125,0.035)_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:linear-gradient(to_bottom,black_5%,transparent_78%)] dark:opacity-25" />
       <div className="relative mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden px-4 sm:px-6">
-        <div className="shrink-0 pt-4">
+        <header className="flex shrink-0 items-center justify-between border-b border-fd-border/60 py-4">
           <Link
             href="/docs"
             aria-label="Back to the wiki"
-            className="inline-flex size-10 items-center justify-center rounded-full border border-transparent text-[#172b5f] transition hover:border-[#dfe3ea] hover:bg-white hover:shadow-sm dark:text-fd-foreground dark:hover:border-fd-border dark:hover:bg-fd-card"
+            className="inline-flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-fd-foreground"
           >
-            <ArrowLeft className="size-5" />
+            <ArrowLeft className="size-4" />
+            <span className="hidden sm:inline">Back to handbook</span>
           </Link>
-        </div>
+          <Badge variant="outline" className="bg-fd-card/70 shadow-sm">
+            <Sparkles className="size-3.5 text-fd-primary" />
+            Relay AI
+          </Badge>
+        </header>
 
         <section
           aria-live="polite"
@@ -132,31 +150,34 @@ export function AskAiChat() {
         >
           {messages.length === 0 ? (
             <div className="my-auto flex flex-col items-center text-center">
-              <span className="flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#172b5f] to-[#5272c9] text-white shadow-lg shadow-[#172b5f]/20 ring-4 ring-white/60 dark:ring-white/5">
+              <span className="flex size-16 items-center justify-center rounded-2xl bg-fd-primary text-white shadow-lg shadow-fd-primary/20 ring-8 ring-fd-accent">
                 <Sparkles className="size-8" />
               </span>
-              <h2 className="mt-6 text-3xl font-semibold tracking-tight text-[#172b5f] dark:text-white sm:text-4xl">
-                Hi, how can I help?
+              <Badge className="mt-6">Search-powered answers</Badge>
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-fd-foreground sm:text-4xl">
+                What can I help you find?
               </h2>
               <p className="mt-3 max-w-lg text-sm leading-6 text-fd-muted-foreground sm:text-base">
                 Ask a question and I&apos;ll search the AFE Handbook for the most relevant information.
               </p>
 
-              <div className="mt-10 grid w-full max-w-3xl gap-3 sm:grid-cols-3">
+              <Card className="mt-10 w-full max-w-3xl bg-fd-card/80 shadow-lg shadow-fd-primary/5 backdrop-blur">
+                <CardContent className="grid gap-3 p-3 sm:grid-cols-3">
                 {suggestions.map((suggestion) => (
                   <button
                     key={suggestion}
                     type="button"
                     onClick={() => void sendMessage(suggestion)}
-                    className="group flex min-h-28 flex-col justify-between gap-3 rounded-2xl border border-[#dfe3ea] bg-white/80 p-4 text-left text-sm font-medium text-[#172b5f] shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-[#8ca3df] hover:shadow-md dark:border-fd-border dark:bg-fd-card dark:text-fd-foreground"
+                    className="group flex min-h-28 flex-col justify-between gap-3 rounded-xl border border-fd-border bg-fd-background p-4 text-left text-sm font-medium text-fd-foreground transition-all hover:-translate-y-0.5 hover:border-fd-primary/50 hover:bg-fd-accent hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-ring"
                   >
-                    <span className="flex size-8 items-center justify-center rounded-lg bg-[#e7edff] text-[#3755a5] transition-colors group-hover:bg-[#5272c9] group-hover:text-white dark:bg-[#202e57] dark:text-[#b8c6f5]">
+                    <span className="flex size-8 items-center justify-center rounded-lg bg-fd-accent text-fd-primary transition-colors group-hover:bg-fd-primary group-hover:text-white">
                       <BookOpen className="size-4" />
                     </span>
                     <span>{suggestion}</span>
                   </button>
                 ))}
-              </div>
+                </CardContent>
+              </Card>
             </div>
           ) : (
             <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
@@ -166,7 +187,7 @@ export function AskAiChat() {
                   className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {message.role === 'assistant' && (
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#172b5f] to-[#5272c9] text-white shadow-sm">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-fd-primary text-white shadow-sm shadow-fd-primary/20">
                       <Sparkles className="size-4" />
                     </span>
                   )}
@@ -174,13 +195,22 @@ export function AskAiChat() {
                     <div
                       className={
                         message.role === 'user'
-                          ? 'whitespace-pre-wrap rounded-2xl rounded-br-md bg-[#172b5f] px-4 py-3 text-sm leading-6 text-white shadow-sm'
-                          : 'rounded-2xl rounded-bl-md border border-[#dfe3ea] bg-white px-4 py-3 text-sm leading-6 text-fd-foreground shadow-sm dark:border-fd-border dark:bg-fd-card'
+                          ? 'whitespace-pre-wrap rounded-2xl rounded-br-md bg-fd-foreground px-4 py-3 text-sm leading-6 text-fd-background shadow-sm'
+                          : 'rounded-2xl rounded-bl-md border border-fd-border bg-fd-card px-4 py-3 text-sm leading-6 text-fd-foreground shadow-sm'
                       }
                     >
                       {message.role === 'assistant' && message.content ? (
-                        <div className="prose prose-sm max-w-none text-sm leading-6 [&_a]:text-[#3755a5] [&_a]:underline [&_a]:underline-offset-2 dark:[&_a]:text-[#b8c6f5] [&_pre]:overflow-x-auto [&>:first-child]:mt-0 [&>:last-child]:mb-0">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        <div className="prose prose-sm max-w-none text-sm leading-6 [&_a]:text-fd-primary [&_a]:underline [&_a]:underline-offset-2 [&_pre]:overflow-x-auto [&>:first-child]:mt-0 [&>:last-child]:mb-0">
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              a: ({ href, title, children }) => (
+                                <a href={href} title={title} target="_blank" rel="noopener noreferrer">
+                                  {children}
+                                </a>
+                              ),
+                            }}
+                          >
                             {message.content}
                           </ReactMarkdown>
                         </div>
@@ -189,16 +219,16 @@ export function AskAiChat() {
                       )}
                       {!message.content && (
                         <span className="inline-flex gap-1" aria-label="Generating response">
-                          <span className="size-1.5 animate-bounce rounded-full bg-[#5272c9]" />
-                          <span className="size-1.5 animate-bounce rounded-full bg-[#5272c9] [animation-delay:120ms]" />
-                          <span className="size-1.5 animate-bounce rounded-full bg-[#5272c9] [animation-delay:240ms]" />
+                          <span className="size-1.5 animate-bounce rounded-full bg-fd-primary" />
+                          <span className="size-1.5 animate-bounce rounded-full bg-fd-primary [animation-delay:120ms]" />
+                          <span className="size-1.5 animate-bounce rounded-full bg-fd-primary [animation-delay:240ms]" />
                         </span>
                       )}
-                      {isStreaming && message.role === 'assistant' && message.content && (
-                        <span className="ml-1 inline-block h-4 w-0.5 animate-pulse bg-[#5272c9] align-middle" />
+                      {streamingMessageId === message.id && message.content && (
+                        <span className="ml-1 inline-block h-4 w-0.5 animate-pulse bg-fd-primary align-middle" />
                       )}
                     </div>
-                    {message.role === 'assistant' && message.content && !isStreaming && (
+                    {message.role === 'assistant' && message.content && streamingMessageId !== message.id && (
                       <div className="mt-1.5 flex items-center gap-1 pl-1">
                         <button
                           type="button"
@@ -208,7 +238,7 @@ export function AskAiChat() {
                             setCopiedId(message.id);
                             setTimeout(() => setCopiedId(null), 2000);
                           }}
-                          className={`flex size-7 items-center justify-center rounded-md transition ${copiedId === message.id ? 'text-green-600 dark:text-green-400' : 'text-[#4a5568] hover:bg-[#e7edff] hover:text-[#172b5f] dark:text-fd-muted-foreground dark:hover:bg-fd-accent dark:hover:text-fd-foreground'}`}
+                          className={`flex size-7 items-center justify-center rounded-md transition ${copiedId === message.id ? 'text-green-600 dark:text-green-400' : 'text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-foreground'}`}
                         >
                           {copiedId === message.id ? <Check className="size-4" /> : <ClipboardCopy className="size-4" />}
                         </button>
@@ -224,7 +254,7 @@ export function AskAiChat() {
                             a.click();
                             URL.revokeObjectURL(url);
                           }}
-                          className="flex size-7 items-center justify-center rounded-md text-[#4a5568] transition hover:bg-[#e7edff] hover:text-[#172b5f] dark:text-fd-muted-foreground dark:hover:bg-fd-accent dark:hover:text-fd-foreground"
+                          className="flex size-7 items-center justify-center rounded-md text-fd-muted-foreground transition hover:bg-fd-accent hover:text-fd-foreground"
                         >
                           <Download className="size-4" />
                         </button>
@@ -232,7 +262,7 @@ export function AskAiChat() {
                           type="button"
                           aria-label="Like response"
                           onClick={() => setReactions((prev) => ({ ...prev, [message.id]: prev[message.id] === 'like' ? null : 'like' }))}
-                          className={`flex size-7 items-center justify-center rounded-md transition ${reactions[message.id] === 'like' ? 'bg-[#e7edff] text-[#172b5f] dark:bg-fd-accent dark:text-fd-foreground' : 'text-[#4a5568] hover:bg-[#e7edff] hover:text-[#172b5f] dark:text-fd-muted-foreground dark:hover:bg-fd-accent dark:hover:text-fd-foreground'}`}
+                          className={`flex size-7 items-center justify-center rounded-md transition ${reactions[message.id] === 'like' ? 'bg-fd-accent text-fd-foreground' : 'text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-foreground'}`}
                         >
                           <ThumbsUp className="size-4" />
                         </button>
@@ -240,7 +270,7 @@ export function AskAiChat() {
                           type="button"
                           aria-label="Dislike response"
                           onClick={() => setReactions((prev) => ({ ...prev, [message.id]: prev[message.id] === 'dislike' ? null : 'dislike' }))}
-                          className={`flex size-7 items-center justify-center rounded-md transition ${reactions[message.id] === 'dislike' ? 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400' : 'text-[#4a5568] hover:bg-[#e7edff] hover:text-[#172b5f] dark:text-fd-muted-foreground dark:hover:bg-fd-accent dark:hover:text-fd-foreground'}`}
+                          className={`flex size-7 items-center justify-center rounded-md transition ${reactions[message.id] === 'dislike' ? 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400' : 'text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-foreground'}`}
                         >
                           <ThumbsDown className="size-4" />
                         </button>
@@ -257,26 +287,38 @@ export function AskAiChat() {
         <div className="shrink-0 pb-3 pt-3">
           <form
             onSubmit={handleSubmit}
-            className="mx-auto flex w-full max-w-3xl items-end gap-2 rounded-2xl border border-[#cbd2df] bg-white p-2 shadow-[0_8px_30px_rgba(23,43,95,0.12)] focus-within:border-[#5272c9] focus-within:ring-2 focus-within:ring-[#5272c9]/15 dark:border-fd-border dark:bg-fd-card"
+            className="mx-auto flex w-full max-w-3xl items-end gap-2 rounded-2xl border border-fd-border bg-fd-card p-2 shadow-lg shadow-fd-primary/10 focus-within:border-fd-primary focus-within:ring-2 focus-within:ring-fd-primary/15"
           >
             <textarea
               value={input}
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask about the AFE program..."
+              placeholder={isStreaming ? 'You can type your next question…' : 'Ask about the AFE program...'}
               aria-label="Message Ask AFE"
               rows={1}
-              disabled={isStreaming}
-              className="max-h-32 min-h-11 flex-1 resize-none bg-transparent px-3 py-2.5 text-sm text-fd-foreground outline-none placeholder:text-fd-muted-foreground disabled:cursor-not-allowed"
+              className="max-h-32 min-h-11 flex-1 resize-none bg-transparent px-3 py-2.5 text-sm text-fd-foreground outline-none placeholder:text-fd-muted-foreground"
             />
-            <button
-              type="submit"
-              disabled={!input.trim() || isStreaming}
-              aria-label="Send message"
-              className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#172b5f] text-white transition hover:bg-[#223c7b] disabled:cursor-not-allowed disabled:opacity-35"
-            >
-              <ArrowUp className="size-5" />
-            </button>
+            {isStreaming ? (
+              <Button
+                type="button"
+                size="icon"
+                onClick={() => abortControllerRef.current?.abort()}
+                aria-label="Stop generating"
+                className="shrink-0 rounded-xl"
+              >
+                <Square className="size-4 fill-current" />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                size="icon"
+                disabled={!input.trim()}
+                aria-label="Send message"
+                className="shrink-0 rounded-xl"
+              >
+                <ArrowUp className="size-5" />
+              </Button>
+            )}
           </form>
           <p className="mx-auto mt-2 max-w-3xl text-center text-[11px] text-fd-muted-foreground">
             Ask AFE is a preview and may not have answers yet. Verify important information in the handbook.

@@ -128,3 +128,23 @@ html > body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;
 }
+
+/* Shared interaction polish for the shadcn-style primitives. */
+::selection {
+  background: color-mix(in srgb, var(--afe-orange) 24%, transparent);
+}
+
+:where(a, button, textarea, input):focus-visible {
+  outline: 2px solid var(--color-fd-ring);
+  outline-offset: 2px;
+}
+
+#nd-nav {
+  border-bottom-color: color-mix(in srgb, var(--afe-blue) 10%, transparent);
+  background: color-mix(in srgb, var(--color-fd-background) 86%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.dark #nd-nav {
+  border-bottom-color: color-mix(in srgb, #ffffff 10%, transparent);
+}
