@@ -21,16 +21,13 @@ export function baseOptions(): BaseLayoutProps {
         </span>
       ),
     },
-    // "Ask AI" entry point (top bar) — wired to the Bedrock chatbot later.
-    // Uses a `custom` item so we render a single-root element (no unkeyed
-    // [icon, text] array, which triggers React's missing-key warning).
     links: [
       {
         type: 'custom',
         secondary: true,
         children: (
           <Link
-            href="/docs"
+            href="/ask-ai"
             className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
             style={{ backgroundColor: '#f55c38' }}
           >
