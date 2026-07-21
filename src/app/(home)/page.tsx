@@ -10,6 +10,7 @@ import {
   Map,
   Users,
 } from 'lucide-react';
+import { RelayLogo } from '@/components/logo';
 
 const categories = [
   {
@@ -72,11 +73,9 @@ export default function HomePage() {
         >
           Amazon Future Engineers
         </span>
-        <h1
-          className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl"
-          style={{ color: '#0d2d7d' }}
-        >
-          <span className="dark:text-white">Relay</span>
+        <h1 className="mt-6 flex justify-center">
+          <RelayLogo className="h-20 sm:h-24" />
+          <span className="sr-only">Relay</span>
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-fd-muted-foreground">
           Your handbook for the Amazon Future Engineers program — onboarding,

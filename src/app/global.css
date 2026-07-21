@@ -108,6 +108,18 @@
   font-weight: 700;
 }
 
+/* Logo theme switch — keyed on the .dark class (toggled by next-themes),
+   not Tailwind's dark: variant. Light logo by default; dark logo when .dark. */
+.relay-logo--dark {
+  display: none;
+}
+.dark .relay-logo--light {
+  display: none;
+}
+.dark .relay-logo--dark {
+  display: block;
+}
+
 html {
   scrollbar-gutter: stable;
 }

@@ -2,3 +2,6 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+minimumReleaseAgeExclude:
+  - '@aws-sdk/client-bedrock-runtime@3.1091.0'
+  - '@aws-sdk/token-providers@3.1091.0'

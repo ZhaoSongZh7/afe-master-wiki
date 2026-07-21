@@ -1,25 +1,12 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
-import { appName } from './shared';
+import { RelayLogo } from '@/components/logo';
 
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: (
-        <span className="inline-flex items-center gap-2 font-semibold">
-          <span
-            className="inline-flex size-6 items-center justify-center rounded-md text-[13px] font-bold text-white"
-            style={{ backgroundColor: '#f55c38' }}
-            aria-hidden
-          >
-            R
-          </span>
-          <span style={{ color: '#0d2d7d' }} className="dark:text-white">
-            {appName}
-          </span>
-        </span>
-      ),
+      title: <RelayLogo className="h-10" />,
     },
     links: [
       {
