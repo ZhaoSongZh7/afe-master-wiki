@@ -20,6 +20,12 @@ import {
   Map,
   PartyPopper,
   CircleQuestionMark,
+  SquareTerminal,
+  Bot,
+  IdCard,
+  Armchair,
+  MessagesSquare,
+  ClipboardCheck,
 } from 'lucide-react';
 
 // Icons referenced as JSX inside MDX (e.g. <Card icon={<Rocket />} />) must be
@@ -44,6 +50,12 @@ const icons = {
   Map,
   PartyPopper,
   CircleQuestionMark,
+  SquareTerminal,
+  Bot,
+  IdCard,
+  Armchair,
+  MessagesSquare,
+  ClipboardCheck,
 };
 
 export function getMDXComponents(components?: MDXComponents) {

@@ -1,35 +1,63 @@
 import Link from 'next/link';
-import { ArrowRight, Rocket, Wallet, Building2, Briefcase, Users } from 'lucide-react';
+import {
+  ArrowRight,
+  Rocket,
+  Wallet,
+  Car,
+  Building2,
+  SquareTerminal,
+  TrendingUp,
+  Map,
+  Users,
+} from 'lucide-react';
 
 const categories = [
   {
     title: 'Getting Started',
     description: "Before Day One, glossary & acronyms, who's who.",
-    href: '/docs/getting-started',
+    href: '/docs/before-day-one',
     Icon: Rocket,
   },
   {
-    title: 'Money & Benefits',
-    description: 'Insurance, expenses, PTO, and relocation.',
-    href: '/docs/money-benefits',
+    title: 'Pay & Benefits',
+    description: 'Insurance, expenses & reimbursement, and time off.',
+    href: '/docs/benefits-insurance',
     Icon: Wallet,
   },
   {
-    title: 'Logistics & Facilities',
-    description: 'Commute, parking, badge access, and equipment.',
-    href: '/docs/logistics-facilities',
+    title: 'Logistics & Commute',
+    description: 'Transportation, badge access, and relocation.',
+    href: '/docs/transportation-commute',
+    Icon: Car,
+  },
+  {
+    title: 'Facilities & Equipment',
+    description: 'Equipment requests and your physical workspace.',
+    href: '/docs/gref',
     Icon: Building2,
   },
   {
-    title: 'Work & Development',
-    description: 'Tools & software setup, and career growth.',
-    href: '/docs/work-development',
-    Icon: Briefcase,
+    title: 'Tools & Software',
+    description: 'Dev environment setup, Claude, and Kiro.',
+    href: '/docs/dev-environment-setup',
+    Icon: SquareTerminal,
   },
   {
-    title: 'Community & Support',
-    description: 'Timeline, culture, wellness, events, and FAQ.',
-    href: '/docs/community-support',
+    title: 'Career & Growth',
+    description: 'Mentorship, goals & 1:1s, and evaluations.',
+    href: '/docs/career-development',
+    Icon: TrendingUp,
+  },
+  {
+    title: 'The Program',
+    description: 'Timeline, milestones, and culture & values.',
+    href: '/docs/program-overview',
+    Icon: Map,
+  },
+  {
+    title: 'Community & Wellbeing',
+    description: 'Health & wellness, and events & community.',
+    href: '/docs/health-wellness',
     Icon: Users,
   },
 ];
@@ -63,7 +91,7 @@ export default function HomePage() {
             Get started <ArrowRight className="size-4" />
           </Link>
           <Link
-            href="/docs/community-support/faq"
+            href="/docs/faq"
             className="inline-flex items-center gap-2 rounded-lg border border-fd-border px-5 py-2.5 font-medium text-fd-foreground transition-colors hover:bg-fd-accent"
           >
             Read the FAQ
