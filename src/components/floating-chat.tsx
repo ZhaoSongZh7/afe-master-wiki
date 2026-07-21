@@ -226,6 +226,7 @@ export function FloatingChat() {
       {/* Bubble button */}
       <button
         type="button"
+        data-tour="chat-bubble"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Close Ask Relay' : 'Open Ask Relay'}
         aria-expanded={open}

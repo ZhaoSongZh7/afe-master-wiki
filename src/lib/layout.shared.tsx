@@ -29,6 +29,7 @@ export function baseOptions(): BaseLayoutProps {
         children: (
           <Link
             href="/ask-ai"
+            data-tour="ask-ai"
             className={buttonVariants({ size: 'sm' })}
           >
             <Sparkles className="size-3.5" />

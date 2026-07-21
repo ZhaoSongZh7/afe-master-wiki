@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { RelayLogo } from '@/components/logo';
 import { DayOneChecklist } from '@/components/day-one-checklist';
+import { ProductTour, TourButton } from '@/components/product-tour';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -102,9 +103,10 @@ export default function HomePage() {
           <Link href="/docs/faq" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
             Read the FAQ
           </Link>
+          <TourButton className={buttonVariants({ variant: 'ghost', size: 'lg' })} />
         </div>
 
-        <div className="mx-auto mt-12 max-w-md">
+        <div className="mx-auto mt-12 max-w-md" data-tour="checklist">
           <DayOneChecklist variant="widget" />
         </div>
       </section>
@@ -121,7 +123,7 @@ export default function HomePage() {
             View all <ArrowUpRight className="size-4" />
           </Link>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-tour="categories">
           {categories.map(({ title, description, href, Icon }) => (
             <Link key={href} href={href} className="group focus-visible:outline-none">
               <Card className="h-full transition-all duration-200 group-hover:-translate-y-1 group-hover:border-fd-primary/50 group-hover:shadow-lg group-hover:shadow-fd-primary/10 group-focus-visible:ring-2 group-focus-visible:ring-fd-ring">
@@ -140,6 +142,8 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      <ProductTour />
     </main>
   );
 }
