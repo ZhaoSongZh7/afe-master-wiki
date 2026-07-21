@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "afe-wiki": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["mcp/build/index.js"],
+      "description": "Search and read the AFE Relay wiki handbook"
+    }
+  }
+}

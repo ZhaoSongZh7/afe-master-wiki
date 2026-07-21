@@ -1,0 +1,21 @@
+{
+  "name": "afe-wiki-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for the AFE Relay wiki — search and read handbook pages from Claude Code",
+  "type": "module",
+  "bin": {
+    "afe-wiki-mcp": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.3"
+  }
+}
